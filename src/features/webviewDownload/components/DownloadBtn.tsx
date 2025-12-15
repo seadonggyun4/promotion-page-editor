@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useWebViewDownload } from "../hook/useWebViewDownload";
 import backgroundImage from  '../../../asset/img/promotionPage.jpeg'
-
-interface DonloadBtnProps {
-    uploadedImage: string | ArrayBuffer | null; // 적절한 타입 지정
-}
+import { DownloadBtnProps } from "../../../types";
 
 interface DownloadBtnStyleProps {
     $clicked: boolean;
 }
 
-function DonloadBtn({uploadedImage}: DonloadBtnProps) {
+function DownloadBtn({uploadedImage}: DownloadBtnProps) {
     const { webViewDownload } = useWebViewDownload(uploadedImage, backgroundImage);
     const [clicked, setClicked] = useState(false);
 
@@ -134,4 +131,4 @@ const DownloadBtnStyle = styled.button<DownloadBtnStyleProps>`
 `;
 
 
-export default DonloadBtn
+export default DownloadBtn

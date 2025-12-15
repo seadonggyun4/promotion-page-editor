@@ -1,42 +1,17 @@
-import React, {ChangeEvent, Dispatch, SetStateAction, useEffect} from "react";
-import styled from "styled-components";
+import React, { ChangeEvent, useEffect } from "react";
 import { useElementsContext } from "../../../app/provider/ElementsProvider";
+import { GradationBtnHook } from "../../../types";
+import {
+    ModalMenu,
+    SettingForm,
+    StyledLabel,
+    StyledInput,
+    StyledColorLabel,
+    ColorInputWrapper,
+    HiddenColorInput,
+} from "./FormStyles";
 
-interface gradationBtnHook {
-    menu: string[],
-    menuActive: string,
-    setMenuActive: Dispatch<SetStateAction<string>>,
-    buttonText: string,
-    handleTextChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    buttonLink: string,
-    handleLinkChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    textColor: string,
-    handleTextColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    gradationColor1: string,
-    handleGradationColor1Change: (event: ChangeEvent<HTMLInputElement>) => void,
-    gradationColor2: string,
-    handleGradationColor2Change: (event: ChangeEvent<HTMLInputElement>) => void,
-    gradationColor3: string,
-    handleGradationColor3Change: (event: ChangeEvent<HTMLInputElement>) => void,
-    gradationColor4: string,
-    handleGradationColor4Change: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderRadius: string,
-    handleBorderRadiusChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderWidth: string,
-    handleBorderWidthChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderColor: string,
-    handleBorderColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowOffsetX: string,
-    handleShadowOffsetXChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowOffsetY: string,
-    handleShadowOffsetYChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowBlurRadius: string,
-    handleShadowBlurRadiusChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowColor: string,
-    handleShadowColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-}
-
-function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: gradationBtnHook }) {
+function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: GradationBtnHook }) {
     const { selected } = useElementsContext()
     const {
         menu,
@@ -88,6 +63,7 @@ function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: gradationBtnHo
         handleShadowOffsetYChange({ target: { value: selected?.styleData.shadowOffsetY } } as ChangeEvent<HTMLInputElement>)
         handleShadowBlurRadiusChange({ target: { value: selected?.styleData.shadowBlurRadius } } as ChangeEvent<HTMLInputElement>)
         handleShadowColorChange({ target: { value: selected?.styleData.shadowColor } } as ChangeEvent<HTMLInputElement>)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     return (
@@ -122,60 +98,55 @@ function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: gradationBtnHo
                 menuActive === menu[1] &&
                 <SettingForm>
                     <StyledLabel>텍스트 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="textColorInput" style={{backgroundColor: textColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="textColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={textColor}
                             onChange={handleTextColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                     <StyledLabel>첫번째 그라데이션 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="gradation1ColorInput" style={{backgroundColor: gradationColor1}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="gradation1ColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={gradationColor1}
                             onChange={handleGradationColor1Change}
                         />
-                    </div>
+                    </ColorInputWrapper>
                     <StyledLabel>두번째 그라데이션 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="gradation2ColorInput" style={{backgroundColor: gradationColor2}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="gradation2ColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={gradationColor2}
                             onChange={handleGradationColor2Change}
                         />
-                    </div>
+                    </ColorInputWrapper>
                     <StyledLabel>세번째 그라데이션 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="gradation3ColorInput" style={{backgroundColor: gradationColor3}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="gradation3ColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={gradationColor3}
                             onChange={handleGradationColor3Change}
                         />
-                    </div>
+                    </ColorInputWrapper>
                     <StyledLabel>네번째 그라데이션 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="gradation4ColorInput" style={{backgroundColor: gradationColor4}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="gradation4ColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={gradationColor4}
                             onChange={handleGradationColor4Change}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
             {
@@ -198,15 +169,14 @@ function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: gradationBtnHo
                         onChange={handleBorderWidthChange}
                     />
                     <StyledLabel>테두리 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="borderColorInput" style={{backgroundColor: borderColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="borderColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             onChange={handleBorderColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
             {
@@ -234,91 +204,18 @@ function GradationBtnForm({gradationBtnHook}: { gradationBtnHook: gradationBtnHo
                         value={shadowBlurRadius}
                         onChange={handleShadowBlurRadiusChange}/>
                     <StyledLabel>그림자 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="shadowColorInput" style={{backgroundColor: shadowColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="shadowColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             onChange={handleShadowColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
         </>
     )
 }
 
-
-const ModalMenu = styled.ul`
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-    margin-bottom: 2rem;
-    
-    & li {
-        display: inline-flex;
-        flex-shrink: 0;
-        align-items: center;
-        height: 30px;
-        font-weight: 500;
-        color: inherit;
-        border-bottom: 3px solid transparent;
-        text-decoration: none;
-        cursor: pointer;
-        transition: 0.15s ease;
-    }
-
-    & li:hover,
-    & li.active {
-        color: var(--c-accent-primary);
-        border-bottom-color: var(--c-accent-primary);
-    }
-`
-// global form style
-const StyledLabel = styled.label`
-    color: var(--c-text-action);
-    text-transform: uppercase;
-    font-size: 1rem;
-`;
-const SettingForm = styled.div`
-    display: flex;
-    justify-content: start;
-    flex-direction: column;
-    row-gap: 0.5rem;
-    height: 100%;
-    max-height: 350px;
-`;
-// textSetting
-const StyledInput = styled.input`
-    margin-bottom: 1.5rem;
-    padding: 0.5rem;
-    border: 2px solid var(--c-border-primary);
-    border-radius: 5px;
-    outline: none;
-    transition: 0.3s ease-in-out;
-
-    &:focus {
-        border: 2px solid var(--c-accent-primary);
-    }
-`;
-// colorSetting
-const StyledColorLabel = styled.label`
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 2em;
-    color: #ffffff;
-    background-color: var(--c-border-primary);
-    border-radius: 5px; 
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    
-    &:hover {
-        background-color: var(--c-accent-primary);
-    }
-`;
-
-export default GradationBtnForm
+export default GradationBtnForm;

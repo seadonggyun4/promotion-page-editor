@@ -3,10 +3,7 @@ import styled from "styled-components";
 import UploadArea from '../../features/uploadImage/components/UploadArea'
 import ButtonBox from "../../features/setButton/components/ButtonBox";
 import {MENU} from "../../constant/global";
-
-interface ContentPanelProps {
-    menuActive : string,
-}
+import { ContentPanelProps } from "../../types";
 
 function ContentPanel({menuActive} :ContentPanelProps) {
     return(

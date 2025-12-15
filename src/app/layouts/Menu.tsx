@@ -1,12 +1,7 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import styled from "styled-components";
 import { MENU } from "../../constant/global";
-
-interface MenuProps {
-    menuActive : string,
-    menuClick : Function,
-    children?: ReactNode;
-}
+import { MenuProps } from "../../types";
 
 function Menu({ menuActive, menuClick, children = null }: MenuProps) {
     return (

@@ -1,34 +1,15 @@
-import React, {ChangeEvent, Dispatch, SetStateAction, useEffect} from "react";
-import styled from "styled-components";
+import React, { ChangeEvent, useEffect } from "react";
 import { useElementsContext } from "../../../app/provider/ElementsProvider";
-
-interface SimpleBtnHook {
-    menu: string[],
-    menuActive: string,
-    setMenuActive: Dispatch<SetStateAction<string>>,
-    buttonText: string,
-    handleTextChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    buttonLink: string,
-    handleLinkChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    textColor: string,
-    handleTextColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    backgroundColor: string,
-    handleBackgroundColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderRadius: string,
-    handleBorderRadiusChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderWidth: string,
-    handleBorderWidthChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    borderColor: string,
-    handleBorderColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowOffsetX: string,
-    handleShadowOffsetXChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowOffsetY: string,
-    handleShadowOffsetYChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowBlurRadius: string,
-    handleShadowBlurRadiusChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    shadowColor: string,
-    handleShadowColorChange: (event: ChangeEvent<HTMLInputElement>) => void,
-}
+import { SimpleBtnHook } from "../../../types";
+import {
+    ModalMenu,
+    SettingForm,
+    StyledLabel,
+    StyledInput,
+    StyledColorLabel,
+    ColorInputWrapper,
+    HiddenColorInput,
+} from "./FormStyles";
 
 function SimpleBtnForm({simpleBtnHook}: { simpleBtnHook: SimpleBtnHook }) {
     const { selected } = useElementsContext()
@@ -73,6 +54,7 @@ function SimpleBtnForm({simpleBtnHook}: { simpleBtnHook: SimpleBtnHook }) {
         handleShadowOffsetYChange({ target: { value: selected?.styleData.shadowOffsetY } } as ChangeEvent<HTMLInputElement>)
         handleShadowBlurRadiusChange({ target: { value: selected?.styleData.shadowBlurRadius } } as ChangeEvent<HTMLInputElement>)
         handleShadowColorChange({ target: { value: selected?.styleData.shadowColor } } as ChangeEvent<HTMLInputElement>)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     return (
@@ -107,27 +89,25 @@ function SimpleBtnForm({simpleBtnHook}: { simpleBtnHook: SimpleBtnHook }) {
                 menuActive === menu[1] &&
                 <SettingForm>
                     <StyledLabel>텍스트 색상</StyledLabel>
-                    <div style={{position: 'relative', marginBottom: '1.5rem'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="textColorInput" style={{backgroundColor: textColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="textColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={textColor}
                             onChange={handleTextColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                     <StyledLabel>버튼 색상</StyledLabel>
-                    <div style={{position: 'relative', marginBottom: '1.5rem'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="backgroundColorInput" style={{backgroundColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="backgroundColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             value={backgroundColor}
                             onChange={handleBackgroundColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
             {
@@ -150,15 +130,14 @@ function SimpleBtnForm({simpleBtnHook}: { simpleBtnHook: SimpleBtnHook }) {
                         onChange={handleBorderWidthChange}
                     />
                     <StyledLabel>테두리 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="borderColorInput" style={{backgroundColor: borderColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="borderColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             onChange={handleBorderColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
             {
@@ -186,90 +165,18 @@ function SimpleBtnForm({simpleBtnHook}: { simpleBtnHook: SimpleBtnHook }) {
                         value={shadowBlurRadius}
                         onChange={handleShadowBlurRadiusChange}/>
                     <StyledLabel>그림자 색상</StyledLabel>
-                    <div style={{position: 'relative'}}>
+                    <ColorInputWrapper>
                         <StyledColorLabel htmlFor="shadowColorInput" style={{backgroundColor: shadowColor}}>클릭후 색상을 선택해주세요.</StyledColorLabel>
-                        <input
+                        <HiddenColorInput
                             id="shadowColorInput"
                             type="color"
-                            style={{visibility: 'hidden'}}
                             onChange={handleShadowColorChange}
                         />
-                    </div>
+                    </ColorInputWrapper>
                 </SettingForm>
             }
         </>
     )
 }
-
-const ModalMenu = styled.ul`
-    display: flex;
-    align-items: center;
-    column-gap: 1rem;
-    margin-bottom: 2rem;
-    
-    & li {
-        display: inline-flex;
-        flex-shrink: 0;
-        align-items: center;
-        height: 30px;
-        font-weight: 500;
-        color: inherit;
-        border-bottom: 3px solid transparent;
-        text-decoration: none;
-        cursor: pointer;
-        transition: 0.15s ease;
-    }
-
-    & li:hover,
-    & li.active {
-        color: var(--c-accent-primary);
-        border-bottom-color: var(--c-accent-primary);
-    }
-`
-// global form style
-const StyledLabel = styled.label`
-    color: var(--c-text-action);
-    text-transform: uppercase;
-    font-size: 1rem;
-`;
-const SettingForm = styled.div`
-    display: flex;
-    justify-content: start;
-    flex-direction: column;
-    row-gap: 0.5rem;
-    height: 100%;
-    max-height: 350px;
-`;
-// textSetting
-const StyledInput = styled.input`
-    margin-bottom: 1.5rem;
-    padding: 0.5rem;
-    border: 2px solid var(--c-border-primary);
-    border-radius: 5px;
-    outline: none;
-    transition: 0.3s ease-in-out;
-
-    &:focus {
-        border: 2px solid var(--c-accent-primary);
-    }
-`;
-// colorSetting
-const StyledColorLabel = styled.label`
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 2em;
-    color: #ffffff;
-    background-color: var(--c-border-primary);
-    border-radius: 5px; 
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    
-    &:hover {
-        background-color: var(--c-accent-primary);
-    }
-`;
 
 export default SimpleBtnForm;

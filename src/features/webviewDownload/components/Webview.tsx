@@ -5,29 +5,59 @@ import { ELEMENT_MENU } from '../../../constant/global'
 import backgroundImage from "../../../asset/img/promotionPage.jpeg";
 
 import { useElementsContext } from "../../../app/provider/ElementsProvider";
-// import { useSetButtonContext } from "../../../features/setButton/provider/setButtonProvider";
+import { ElementData, WebviewProps, ButtonStyle, ButtonStyleDataLegacy } from "../../../types";
+import { SimpleBtn, GradationBtn } from "../../setButton/components/ButtonStyles";
 
-// type SelectedButtonType = 'SampleBtn' | 'GradationBtn' | null;
+// 데이터 기반 버튼 렌더링 함수
+const renderButton = (style: ButtonStyle, styleData: ButtonStyleDataLegacy): React.ReactNode => {
+    if (style === 'SimpleBtn') {
+        return (
+            <SimpleBtn
+                $backgroundColor={styleData.backgroundColor}
+                $textColor={styleData.textColor}
+                $borderRadius={styleData.borderRadius}
+                href={styleData.buttonLink}
+                target="_blank"
+                style={{
+                    borderWidth: `${styleData.borderWidth}px`,
+                    borderStyle: 'solid',
+                    borderColor: styleData.borderColor,
+                    boxShadow: `${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}`,
+                }}
+            >
+                {styleData.buttonText}
+            </SimpleBtn>
+        );
+    }
 
+    if (style === 'GradationBtn') {
+        return (
+            <GradationBtn
+                $textColor={styleData.textColor}
+                $gradationColor1={styleData.gradationColor1}
+                $gradationColor2={styleData.gradationColor2}
+                $gradationColor3={styleData.gradationColor3}
+                $gradationColor4={styleData.gradationColor4}
+                $borderRadius={styleData.borderRadius}
+                href={styleData.buttonLink}
+                target="_blank"
+                style={{
+                    borderWidth: `${styleData.borderWidth}px`,
+                    borderStyle: 'solid',
+                    borderColor: styleData.borderColor,
+                    boxShadow: `${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}`,
+                }}
+            >
+                {styleData.buttonText}
+            </GradationBtn>
+        );
+    }
 
-interface ElementData {
-    id: string;
-    type: string;
-    style: string;
-    styleData: { [key: string]: any };
-    element: React.ReactNode;
-    x: number;
-    y: number;
-}
-
-interface WebviewProps {
-    elementsData: ElementData[];
-    uploadedImage: string | ArrayBuffer | null;
-}
+    return null;
+};
 
 function Webview({ elementsData, uploadedImage }: WebviewProps) {
     const { updateElementPosition, setSelected, removeElement } = useElementsContext();
-    // const { setSelectedBtn } = useSetButtonContext()
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [menuActive, setMenuActive] = useState('');
 
@@ -98,7 +128,7 @@ function Webview({ elementsData, uploadedImage }: WebviewProps) {
                             onClick={(e) => clickElement(e, data)}
                             draggable
                         >
-                            {data.element}
+                            {renderButton(data.style, data.styleData)}
                             {
                                 menuActive === data.id &&
                                 <ElementMenu>

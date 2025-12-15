@@ -4,8 +4,8 @@ import styled from "styled-components";
 import Header from './layouts/Header'
 import Menu from './layouts/Menu'
 import ContentPanel from "./layouts/ContentPanel";
-import Webview from "../features/webviewDonland/components/Webview";
-import DonloadBtn from '../features/webviewDonland/components/DonloadBtn'
+import Webview from "../features/webviewDownload/components/Webview";
+import DownloadBtn from '../features/webviewDownload/components/DownloadBtn'
 
 // hook & provider
 import { useMenu } from "./hook/useMenu";
@@ -20,7 +20,7 @@ function Main(){
     return(
         <MainStyle>
             <Header />
-            <Menu menuActive={isActive} menuClick={activeMenu} children={<DonloadBtn uploadedImage={uploadedImage} />}/>
+            <Menu menuActive={isActive} menuClick={activeMenu} children={<DownloadBtn uploadedImage={uploadedImage} />}/>
             <ContentStyle>
                 <ContentPanel menuActive={isActive}/>
                <Webview elementsData={elementsData} uploadedImage={uploadedImage} />

@@ -1,13 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useUploadImage } from '../hook/useUploadImage';
-
-// UploadImageContext의 타입 정의
-interface UploadImageContextType {
-    uploadedImage: string | ArrayBuffer | null;
-    handleDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-    handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-    handleFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+import { UploadImageContextType } from "../../../types";
 
 // Context 생성
 const UploadImageContext = createContext<UploadImageContextType | undefined>(undefined);

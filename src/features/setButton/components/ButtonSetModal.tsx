@@ -4,51 +4,87 @@ import styled from 'styled-components';
 // components
 import SimpleBtnForm from "./SimpleBtnForm";
 import GradationBtnForm from "./GradationBtnForm";
+import { SimpleBtn, GradationBtn } from "./ButtonStyles";
 
 // hook & Provider
 import { useElementsContext } from "../../../app/provider/ElementsProvider";
 import { useSimpleBtn } from "../hook/useSimpleBtn";
-import { useGradtionBtn } from "../hook/useGradtionBtn";
+import { useGradationBtn } from "../hook/useGradationBtn";
 
-type ButtonStyle = 'SimpleBtn' | 'GradationBtn';
-
+// types
+import { ButtonStyle, ButtonStyleDataLegacy } from "../../../types";
 
 interface ButtonSetModalProps {
-    selectedBtn: string;
+    selectedBtn: ButtonStyle;
     closeModal: () => void;
-    children: React.ReactElement;
 }
 
-
-
-function ButtonSetModal ({selectedBtn, closeModal, children}: ButtonSetModalProps) {
+function ButtonSetModal ({selectedBtn, closeModal}: ButtonSetModalProps) {
     const {createSampleButton, updateSampleButton, selected } = useElementsContext()
     const simpleBtnHook = useSimpleBtn();
-    const gradationBtnHook = useGradtionBtn()
+    const gradationBtnHook = useGradationBtn()
 
-    const buttonHook = {
-        SimpleBtn: simpleBtnHook,
-        GradationBtn: gradationBtnHook
-    }
-
-    const checkSelectedBtn = (selectedBtn : ButtonStyle) => {
-        const btnHook = buttonHook[selectedBtn];
-        if (btnHook) return {
-            el : React.cloneElement(children, btnHook.customButton(children)),
-            styleData: btnHook.buttonStyle
+    // 버튼 스타일 데이터 가져오기
+    const getButtonStyleData = (): ButtonStyleDataLegacy => {
+        if (selectedBtn === 'SimpleBtn') {
+            return simpleBtnHook.buttonStyle;
         }
-        return {
-            el: children,
-            styleData: {}
-        };
+        return gradationBtnHook.buttonStyle;
     }
 
-    const customButton = checkSelectedBtn(selectedBtn as ButtonStyle);
+    // 미리보기 버튼 렌더링
+    const renderPreviewButton = () => {
+        if (selectedBtn === 'SimpleBtn') {
+            const style = simpleBtnHook.buttonStyle;
+            return (
+                <SimpleBtn
+                    $backgroundColor={style.backgroundColor}
+                    $textColor={style.textColor}
+                    $borderRadius={style.borderRadius}
+                    href={style.buttonLink}
+                    target="_blank"
+                    onClick={(e) => e.preventDefault()}
+                    style={{
+                        borderWidth: `${style.borderWidth}px`,
+                        borderStyle: 'solid',
+                        borderColor: style.borderColor,
+                        boxShadow: `${style.shadowOffsetX}px ${style.shadowOffsetY}px ${style.shadowBlurRadius}px ${style.shadowColor}`,
+                    }}
+                >
+                    {style.buttonText}
+                </SimpleBtn>
+            );
+        }
+
+        const style = gradationBtnHook.buttonStyle;
+        return (
+            <GradationBtn
+                $textColor={style.textColor}
+                $gradationColor1={style.gradationColor1}
+                $gradationColor2={style.gradationColor2}
+                $gradationColor3={style.gradationColor3}
+                $gradationColor4={style.gradationColor4}
+                $borderRadius={style.borderRadius}
+                href={style.buttonLink}
+                target="_blank"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                    borderWidth: `${style.borderWidth}px`,
+                    borderStyle: 'solid',
+                    borderColor: style.borderColor,
+                    boxShadow: `${style.shadowOffsetX}px ${style.shadowOffsetY}px ${style.shadowBlurRadius}px ${style.shadowColor}`,
+                }}
+            >
+                {style.buttonText}
+            </GradationBtn>
+        );
+    }
 
     const addButton = () => {
         if(!selected) return
-        if(selected?.id === '') createSampleButton(customButton.el, selectedBtn, customButton.styleData, Date.now().toString())
-        else updateSampleButton(customButton.el, selected?.id, selected?.style, customButton.styleData)
+        const styleData = getButtonStyleData();
+        if(selected?.id === '') createSampleButton(selectedBtn, styleData, Date.now().toString())
+        else updateSampleButton(selected?.id, selectedBtn, styleData)
         closeModal()
     }
 
@@ -57,7 +93,7 @@ function ButtonSetModal ({selectedBtn, closeModal, children}: ButtonSetModalProp
             <ModalInner>
                 <ElementWrapper>
                     <div style={{width: '200px'}}>
-                        {customButton.el}
+                        {renderPreviewButton()}
                     </div>
                 </ElementWrapper>
                 <ElementSettingBox>
