@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { useWebViewDownload } from "../hook/useWebViewDownload";
 import backgroundImage from  '../../../asset/img/promotionPage.jpeg'

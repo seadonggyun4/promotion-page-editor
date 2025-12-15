@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useUploadImage } from '../hook/useUploadImage';
 import { UploadImageContextType } from "../../../types";
 
