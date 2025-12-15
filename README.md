@@ -1,4 +1,4 @@
-![logo 복사본](https://github.com/user-attachments/assets/4ca6be3b-249e-4ac7-aae5-2330abbbced8)
+<img width="300" height="300" alt="logo" src="https://github.com/user-attachments/assets/4ca6be3b-249e-4ac7-aae5-2330abbbced8" />
 
 # Promotion Page Editor
 The Promotion Page Editor is a software application developed using <br>
