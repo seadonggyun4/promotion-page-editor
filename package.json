@@ -1,6 +1,21 @@
 {
-  "name": "nocode-editor",
+  "name": "promotion-page-editor",
   "version": "0.1.0",
+  "description": "노코드 프로모션 페이지 에디터 - 드래그 앤 드롭으로 프로모션 페이지를 쉽게 만들 수 있는 웹 에디터",
+  "author": "dgseo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dgseo/promotion-page-editor"
+  },
+  "keywords": [
+    "nocode",
+    "editor",
+    "promotion",
+    "landing-page",
+    "react",
+    "typescript"
+  ],
   "private": true,
   "type": "module",
   "scripts": {
