@@ -1,14 +1,41 @@
 :root {
-    --text-primary: #282a32;
-    --c-text-secondary: #686b87;
-    --c-text-action: #404089;
-    --c-accent-primary: #434ce8;
-    --c-accent-warning: #e31765;
-    --c-accent-success: hsl(147, 50%, 47%);
-    --c-accent-success-secondary: hsl(147, 50%, 37%);
-    --c-border-primary: #eff1f6;
-    --c-background-primary: #ffffff;
-    --c-background-secondary: #fdfcff;
-    --c-background-tertiary: #ecf3fe;
-    --c-background-quaternary: #e9ecf4;
+    /* Primary Colors - Purple Palette */
+    --c-primary: #8B5CF6;
+    --c-primary-light: #A78BFA;
+    --c-primary-dark: #7C3AED;
+    --c-primary-pastel: #DDD6FE;
+    --c-primary-soft: #EDE9FE;
+
+    /* Secondary Colors - Pastel Accents */
+    --c-secondary: #C4B5FD;
+    --c-accent-pink: #F0ABFC;
+    --c-accent-blue: #A5B4FC;
+    --c-accent-mint: #A7F3D0;
+
+    /* Text Colors */
+    --text-primary: #1F2937;
+    --c-text-secondary: #6B7280;
+    --c-text-action: #7C3AED;
+    --c-text-muted: #9CA3AF;
+
+    /* Legacy mappings */
+    --c-accent-primary: #8B5CF6;
+    --c-accent-warning: #F472B6;
+    --c-accent-success: #34D399;
+    --c-accent-success-secondary: #10B981;
+
+    /* Neumorphism Background */
+    --c-background-primary: #E8E4F0;
+    --c-background-secondary: #E8E4F0;
+    --c-background-tertiary: #F3F0F8;
+    --c-background-quaternary: #DDD8E8;
+    --c-border-primary: #D4D0E0;
+
+    /* Neumorphism Shadows */
+    --shadow-light: #FFFFFF;
+    --shadow-dark: #C5C0D0;
+    --neu-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    --neu-shadow-sm: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+    --neu-shadow-inset: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+    --neu-shadow-pressed: inset 2px 2px 4px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light);
 }

@@ -11,34 +11,44 @@ export function EditorPage() {
     const { isActive, activeMenu } = useMenu();
 
     return (
-        <MainStyle>
+        <>
             <Header />
-            <Menu
-                menuActive={isActive}
-                menuClick={activeMenu}
-                children={<DownloadBtn uploadedImage={uploadedImage} />}
-            />
-            <ContentStyle>
-                <ContentPanel menuActive={isActive} />
-                <Webview elementsData={elementsData} uploadedImage={uploadedImage} />
-            </ContentStyle>
-        </MainStyle>
+            <MainStyle>
+                <ToolbarSection>
+                    <Menu
+                        menuActive={isActive}
+                        menuClick={activeMenu}
+                        children={<DownloadBtn uploadedImage={uploadedImage} />}
+                    />
+                </ToolbarSection>
+                <ContentStyle>
+                    <ContentPanel menuActive={isActive} />
+                    <Webview elementsData={elementsData} uploadedImage={uploadedImage} />
+                </ContentStyle>
+            </MainStyle>
+        </>
     );
 }
 
 const MainStyle = styled.main`
-    padding: 0 1rem;
-    margin: auto auto;
-    height: 100vh;
+    padding: 1.5rem;
+    padding-top: 90px;
+    margin: 0 auto;
+    min-height: 100vh;
     width: 100%;
-    max-width: 1280px;
+    max-width: 1400px;
+`;
+
+const ToolbarSection = styled.section`
+    background: var(--c-background-secondary);
+    border-radius: 16px;
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--neu-shadow);
 `;
 
 const ContentStyle = styled.div`
     display: flex;
     align-items: flex-start;
-    column-gap: 1rem;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid var(--c-border-primary);
+    gap: 1.5rem;
 `;

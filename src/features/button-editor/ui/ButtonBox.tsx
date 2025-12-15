@@ -21,18 +21,16 @@ export function ButtonBox() {
 
     return (
         <ButtonBoxStyle>
-            <Title>버튼 카테고리</Title>
-            <div style={{ height: '50px', width: '100%' }}>
+            <ButtonWrapper onClick={() => setSelectedBtn('SimpleBtn')}>
                 <SimpleBtn
                     $backgroundColor={BTN_STYLE['SimpleBtn']['backgroundColor']}
                     $textColor={BTN_STYLE['SimpleBtn']['textColor']}
                     $borderRadius={Number(BTN_STYLE['SimpleBtn']['borderRadius'])}
-                    onClick={() => setSelectedBtn('SimpleBtn')}
                 >
                     {BTN_STYLE['SimpleBtn']['buttonText']}
                 </SimpleBtn>
-            </div>
-            <div style={{ height: '50px', width: '100%' }}>
+            </ButtonWrapper>
+            <ButtonWrapper onClick={() => setSelectedBtn('GradationBtn')}>
                 <GradationBtn
                     $textColor={BTN_STYLE['GradationBtn']['textColor']}
                     $gradationColor1={BTN_STYLE['GradationBtn']['gradationColor1']}
@@ -40,11 +38,10 @@ export function ButtonBox() {
                     $gradationColor3={BTN_STYLE['GradationBtn']['gradationColor3']}
                     $gradationColor4={BTN_STYLE['GradationBtn']['gradationColor4']}
                     $borderRadius={Number(BTN_STYLE['GradationBtn']['borderRadius'])}
-                    onClick={() => setSelectedBtn('GradationBtn')}
                 >
                     {BTN_STYLE['GradationBtn']['buttonText']}
                 </GradationBtn>
-            </div>
+            </ButtonWrapper>
             {selected?.type === 'button' && (
                 <ButtonSetModal
                     selectedBtn={selected?.style}
@@ -57,14 +54,19 @@ export function ButtonBox() {
 
 const ButtonBoxStyle = styled.article`
     display: flex;
-    align-items: center;
-    justify-content: start;
     flex-direction: column;
-    row-gap: 1rem;
+    gap: 1rem;
 `;
 
-const Title = styled.h2`
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: bold;
+const ButtonWrapper = styled.div`
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.02);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
 `;

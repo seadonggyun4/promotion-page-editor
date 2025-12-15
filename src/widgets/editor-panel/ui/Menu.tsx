@@ -11,19 +11,19 @@ interface MenuProps {
 export function Menu({ menuActive, menuClick, children = null }: MenuProps) {
     return (
         <MenuStyle>
-            <ul>
+            <MenuList>
                 {MENU &&
                     MENU.map((item, index) => (
-                        <li
+                        <MenuItem
                             key={index}
-                            className={item === menuActive ? 'active' : ''}
+                            $isActive={item === menuActive}
                             onClick={() => menuClick(item)}
                         >
                             {item}
-                        </li>
+                        </MenuItem>
                     ))}
-            </ul>
-            <div>{children}</div>
+            </MenuList>
+            <ActionArea>{children}</ActionArea>
         </MenuStyle>
     );
 }
@@ -32,30 +32,40 @@ const MenuStyle = styled.menu`
     display: flex;
     align-items: center;
     justify-content: space-between;
+`;
 
-    & ul {
-        display: flex;
-        align-items: center;
-        column-gap: 1rem;
+const MenuList = styled.ul`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+`;
 
-        & li {
-            display: inline-flex;
-            flex-shrink: 0;
-            align-items: center;
-            height: 48px;
-            padding: 0 0.25rem;
-            font-weight: 500;
-            color: inherit;
-            border-bottom: 3px solid transparent;
-            text-decoration: none;
-            cursor: pointer;
-            transition: 0.15s ease;
-        }
+interface MenuItemProps {
+    $isActive: boolean;
+}
 
-        & li:hover,
-        & li.active {
-            color: var(--c-accent-primary);
-            border-bottom-color: var(--c-accent-primary);
-        }
+const MenuItem = styled.li<MenuItemProps>`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 1.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: ${props => props.$isActive ? 'var(--c-primary-dark)' : 'var(--c-text-secondary)'};
+    background: ${props => props.$isActive ? 'var(--c-background-tertiary)' : 'transparent'};
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: ${props => props.$isActive ? 'var(--neu-shadow-inset)' : 'none'};
+
+    &:hover {
+        color: var(--c-primary);
+        background: var(--c-background-tertiary);
     }
+`;
+
+const ActionArea = styled.div`
+    display: flex;
+    align-items: center;
 `;

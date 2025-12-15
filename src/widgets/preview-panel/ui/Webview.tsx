@@ -156,14 +156,18 @@ export function Webview({ elementsData, uploadedImage }: WebviewProps) {
 const WebViewStyle = styled.section`
     position: relative;
     width: 100%;
-    max-width: 980px;
+    flex: 1;
     height: auto;
-    background: #ffff;
+    background: var(--c-background-secondary);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--neu-shadow);
 `;
 
 const WebViewImage = styled.img`
     width: 100%;
     height: auto;
+    display: block;
 `;
 
 const ElementsBox = styled.div`
@@ -176,44 +180,61 @@ const ElementsBox = styled.div`
 
 const ElementWrap = styled.div`
     position: absolute;
+    cursor: move;
 
     &:active {
-        filter: blur(3px);
+        filter: blur(2px);
+        opacity: 0.8;
+    }
+
+    &:hover {
+        z-index: 10;
     }
 `;
 
 const ElementMenu = styled.ul`
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     padding: 0.5rem;
     width: 100%;
     height: auto;
-    border-radius: 5px;
-    background-color: #ffffff;
+    border-radius: 12px;
+    background: var(--c-background-secondary);
+    box-shadow: var(--neu-shadow);
     animation: popUp 0.2s ease-in-out forwards;
 
     & li {
-        margin-bottom: 0.5rem;
-        padding: 0.5rem;
-        border-radius: 5px;
-        transition: 0.3s ease-in-out;
+        margin-bottom: 0.35rem;
+        padding: 0.625rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--c-text-secondary);
+        transition: all 0.2s ease;
         cursor: pointer;
 
         &:hover {
-            color: var(--c-text-action);
-            background-color: var(--c-background-quaternary);
+            color: var(--c-primary-dark);
+            background: var(--c-primary-soft);
         }
 
         &:last-child {
             margin-bottom: 0;
+            color: var(--c-accent-warning);
+
+            &:hover {
+                background: rgba(244, 114, 182, 0.1);
+            }
         }
     }
 
     @keyframes popUp {
         0% {
             transform: scale(0.9);
+            opacity: 0;
         }
         100% {
             transform: scale(1);
+            opacity: 1;
         }
     }
 `;

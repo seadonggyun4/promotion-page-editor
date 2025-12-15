@@ -160,6 +160,8 @@ const ElementSettingBox = styled.article`
     width: 400px;
     height: 100%;
     border-radius: 15px;
+    display: flex;
+    flex-direction: column;
 `;
 
 const BtnWrapper = styled.div`
@@ -167,6 +169,8 @@ const BtnWrapper = styled.div`
     align-items: center;
     justify-content: center;
     column-gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
 
     & .activeBtn,
     & .cancelBtn {
