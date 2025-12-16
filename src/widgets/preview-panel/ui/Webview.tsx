@@ -1,6 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import {
+    DndContext,
+    DragEndEvent,
+    useDraggable,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
 import { ELEMENT_MENU } from '@/shared/constants';
 import backgroundImage from '@/shared/assets/promotionPage.jpeg';
 import { useElementsStore } from '@/shared/store';
@@ -16,16 +24,18 @@ const renderButton = (style: ButtonStyle, styleData: ButtonStyleDataLegacy): Rea
     if (style === 'SimpleBtn') {
         return (
             <SimpleBtn
+                as="div"
                 $backgroundColor={styleData.backgroundColor}
                 $textColor={styleData.textColor}
                 $borderRadius={Number(styleData.borderRadius)}
-                href={styleData.buttonLink}
-                target="_blank"
                 style={{
+                    width: `${styleData.width || 200}px`,
+                    height: `${styleData.height || 50}px`,
                     borderWidth: `${styleData.borderWidth}px`,
                     borderStyle: 'solid',
                     borderColor: styleData.borderColor,
                     boxShadow: `${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}`,
+                    pointerEvents: 'none',
                 }}
             >
                 {styleData.buttonText}
@@ -36,19 +46,21 @@ const renderButton = (style: ButtonStyle, styleData: ButtonStyleDataLegacy): Rea
     if (style === 'GradationBtn') {
         return (
             <GradationBtn
+                as="div"
                 $textColor={styleData.textColor}
                 $gradationColor1={styleData.gradationColor1}
                 $gradationColor2={styleData.gradationColor2}
                 $gradationColor3={styleData.gradationColor3}
                 $gradationColor4={styleData.gradationColor4}
                 $borderRadius={Number(styleData.borderRadius)}
-                href={styleData.buttonLink}
-                target="_blank"
                 style={{
+                    width: `${styleData.width || 200}px`,
+                    height: `${styleData.height || 50}px`,
                     borderWidth: `${styleData.borderWidth}px`,
                     borderStyle: 'solid',
                     borderColor: styleData.borderColor,
                     boxShadow: `${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}`,
+                    pointerEvents: 'none',
                 }}
             >
                 {styleData.buttonText}
@@ -59,49 +71,88 @@ const renderButton = (style: ButtonStyle, styleData: ButtonStyleDataLegacy): Rea
     return null;
 };
 
+interface DraggableElementProps {
+    data: ElementData;
+    menuActive: string;
+    onElementClick: (e: React.MouseEvent<HTMLDivElement>, data: ElementData) => void;
+    onMenuClick: (data: ElementData, menu: string) => void;
+}
+
+function DraggableElement({ data, menuActive, onElementClick, onMenuClick }: DraggableElementProps) {
+    const { t } = useTranslation();
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: data.id,
+    });
+
+    const style = {
+        top: `${data.y}%`,
+        left: `${data.x}%`,
+        width: `${data.styleData.width || 200}px`,
+        height: `${data.styleData.height || 50}px`,
+        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+        opacity: isDragging ? 0.8 : 1,
+        zIndex: isDragging ? 100 : menuActive === data.id ? 10 : 1,
+    };
+
+    return (
+        <ElementWrap
+            ref={setNodeRef}
+            style={style}
+            {...listeners}
+            {...attributes}
+            onClick={(e) => onElementClick(e, data)}
+        >
+            {renderButton(data.style, data.styleData)}
+            {menuActive === data.id && (
+                <ElementMenu>
+                    {data.type &&
+                        ELEMENT_MENU[data.type as keyof typeof ELEMENT_MENU].map(
+                            (menu, index) => (
+                                <li key={index} onClick={() => onMenuClick(data, menu)}>
+                                    {t(`common.${menu}`)}
+                                </li>
+                            )
+                        )}
+                </ElementMenu>
+            )}
+        </ElementWrap>
+    );
+}
+
 export function Webview({ elementsData, uploadedImage }: WebviewProps) {
     const { t } = useTranslation();
     const { updateElementPosition, setSelected, removeElement } = useElementsStore();
-    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [menuActive, setMenuActive] = useState('');
+    const elementsBoxRef = useRef<HTMLDivElement>(null);
 
-    const handleDragStart = (
-        e: React.DragEvent<HTMLDivElement>,
-        id: string,
-        elementX: number,
-        elementY: number
-    ) => {
-        setMenuActive('');
-        const elementsBox = (e.target as HTMLElement).closest('#elementsBox');
-        const boundingRect = elementsBox?.getBoundingClientRect();
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5,
+            },
+        })
+    );
 
-        if (boundingRect) {
-            const offsetX = e.clientX - boundingRect.left - (boundingRect.width * (elementX / 100));
-            const offsetY = e.clientY - boundingRect.top - (boundingRect.height * (elementY / 100));
-            setDragOffset({ x: offsetX, y: offsetY });
-            e.dataTransfer.setData('id', id);
-        }
-    };
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, delta } = event;
+        const id = active.id as string;
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        const id = e.dataTransfer.getData('id');
+        if (!elementsBoxRef.current) return;
 
-        const boundingRect = e.currentTarget.getBoundingClientRect();
+        const boundingRect = elementsBoxRef.current.getBoundingClientRect();
         const parentWidth = boundingRect.width;
         const parentHeight = boundingRect.height;
 
-        const xPx = e.clientX - boundingRect.left - dragOffset.x;
-        const yPx = e.clientY - boundingRect.top - dragOffset.y;
+        const element = elementsData.find((el) => el.id === id);
+        if (!element) return;
 
-        const xPercent = (xPx / parentWidth) * 100;
-        const yPercent = (yPx / parentHeight) * 100;
+        const deltaXPercent = (delta.x / parentWidth) * 100;
+        const deltaYPercent = (delta.y / parentHeight) * 100;
 
-        updateElementPosition(id, xPercent, yPercent);
-    };
+        const newX = Math.max(0, Math.min(100, element.x + deltaXPercent));
+        const newY = Math.max(0, Math.min(100, element.y + deltaYPercent));
 
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
+        updateElementPosition(id, newX, newY);
     };
 
     const clickElement = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, data: ElementData) => {
@@ -124,32 +175,19 @@ export function Webview({ elementsData, uploadedImage }: WebviewProps) {
                     src={uploadedImage ? uploadedImage.toString() : backgroundImage}
                     alt={t('editor.promotionPageImage')}
                 />
-                <ElementsBox id="elementsBox" onDragOver={handleDragOver} onDrop={handleDrop}>
-                    {elementsData.map((data, index) => (
-                        <ElementWrap
-                            id={`elementWrap`}
-                            key={index}
-                            style={{ top: `${data.y}%`, left: `${data.x}%`, width: '200px', height: '50px' }}
-                            onDragStart={(e) => handleDragStart(e, data.id, data.x, data.y)}
-                            onClick={(e) => clickElement(e, data)}
-                            draggable
-                        >
-                            {renderButton(data.style, data.styleData)}
-                            {menuActive === data.id && (
-                                <ElementMenu>
-                                    {data.type &&
-                                        ELEMENT_MENU[data.type as keyof typeof ELEMENT_MENU].map(
-                                            (menu, index) => (
-                                                <li key={index} onClick={() => elementMenuClick(data, menu)}>
-                                                    {t(`common.${menu}`)}
-                                                </li>
-                                            )
-                                        )}
-                                </ElementMenu>
-                            )}
-                        </ElementWrap>
-                    ))}
-                </ElementsBox>
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                    <ElementsBox id="elementsBox" ref={elementsBoxRef}>
+                        {elementsData.map((data) => (
+                            <DraggableElement
+                                key={data.id}
+                                data={data}
+                                menuActive={menuActive}
+                                onElementClick={clickElement}
+                                onMenuClick={elementMenuClick}
+                            />
+                        ))}
+                    </ElementsBox>
+                </DndContext>
             </WebViewStyle>
         </div>
     );
@@ -182,15 +220,11 @@ const ElementsBox = styled.div`
 
 const ElementWrap = styled.div`
     position: absolute;
-    cursor: move;
+    cursor: grab;
+    touch-action: none;
 
     &:active {
-        filter: blur(2px);
-        opacity: 0.8;
-    }
-
-    &:hover {
-        z-index: 10;
+        cursor: grabbing;
     }
 `;
 
