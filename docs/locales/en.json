@@ -39,7 +39,18 @@
         "step3": "Drag buttons to your desired position",
         "step4": "Click export to save as image",
         "ctaTitle": "Start Now!",
-        "openEditor": "Open Editor"
+        "ctaSubtitle": "Create stunning promotion pages in minutes",
+        "openEditor": "Open Editor",
+        "codeExportTitle": "Code Export",
+        "codeExportDescription": "Export your promotion page as production-ready code. Choose your preferred framework and styling method.",
+        "frameworkSupport": "Framework Support",
+        "frameworkVanilla": "HTML/CSS/JS",
+        "frameworkReact": "React (TypeScript)",
+        "frameworkVue": "Vue 3 (SFC)",
+        "styleSupport": "Styling Options",
+        "styleCss": "CSS / SCSS",
+        "styleCSS_in_JS": "Styled Components / Emotion",
+        "styleTailwind": "Tailwind CSS"
     },
     "editor": {
         "imageUpload": "Image Upload",

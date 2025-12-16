@@ -39,7 +39,18 @@
         "step3": "ボタンをドラッグして配置",
         "step4": "エクスポートボタンで画像として保存",
         "ctaTitle": "今すぐ始めましょう！",
-        "openEditor": "エディターを開く"
+        "ctaSubtitle": "数分で素敵なプロモーションページを作成",
+        "openEditor": "エディターを開く",
+        "codeExportTitle": "コードエクスポート",
+        "codeExportDescription": "プロモーションページを本番環境で使用可能なコードとしてエクスポートできます。お好みのフレームワークとスタイリング方法を選択してください。",
+        "frameworkSupport": "フレームワーク対応",
+        "frameworkVanilla": "HTML/CSS/JS",
+        "frameworkReact": "React (TypeScript)",
+        "frameworkVue": "Vue 3 (SFC)",
+        "styleSupport": "スタイリングオプション",
+        "styleCss": "CSS / SCSS",
+        "styleCSS_in_JS": "Styled Components / Emotion",
+        "styleTailwind": "Tailwind CSS"
     },
     "editor": {
         "imageUpload": "画像アップロード",

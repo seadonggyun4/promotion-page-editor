@@ -39,7 +39,18 @@
         "step3": "버튼을 드래그하여 원하는 위치에 배치하세요",
         "step4": "내보내기 버튼을 눌러 이미지로 저장하세요",
         "ctaTitle": "지금 바로 시작해보세요!",
-        "openEditor": "에디터 열기"
+        "ctaSubtitle": "몇 분 만에 멋진 프로모션 페이지를 만들어보세요",
+        "openEditor": "에디터 열기",
+        "codeExportTitle": "코드 내보내기",
+        "codeExportDescription": "프로모션 페이지를 실제 서비스에서 사용 가능한 코드로 내보내세요. 원하는 프레임워크와 스타일링 방식을 선택할 수 있습니다.",
+        "frameworkSupport": "프레임워크 지원",
+        "frameworkVanilla": "HTML/CSS/JS",
+        "frameworkReact": "React (TypeScript)",
+        "frameworkVue": "Vue 3 (SFC)",
+        "styleSupport": "스타일링 옵션",
+        "styleCss": "CSS / SCSS",
+        "styleCSS_in_JS": "Styled Components / Emotion",
+        "styleTailwind": "Tailwind CSS"
     },
     "editor": {
         "imageUpload": "이미지 업로드",
