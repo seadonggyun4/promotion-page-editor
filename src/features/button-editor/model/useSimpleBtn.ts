@@ -1,23 +1,26 @@
 import { useState } from 'react';
-import { SIMPLE_BTN } from '@/shared/constants';
+import { BTN_STYLE, SIMPLE_BTN } from '@/shared/constants';
 import { useButtonForm } from './useButtonForm';
+import { SimpleBtnStyleData } from '@/shared/types';
 
-export function useSimpleBtn() {
+export function useSimpleBtn(styleName?: string) {
+    const initialStyle = (styleName ? BTN_STYLE[styleName] : SIMPLE_BTN) as SimpleBtnStyleData;
+
     const baseForm = useButtonForm({
-        buttonText: SIMPLE_BTN.buttonText,
-        buttonLink: SIMPLE_BTN.buttonLink,
-        textColor: SIMPLE_BTN.textColor,
-        borderRadius: SIMPLE_BTN.borderRadius,
-        borderWidth: SIMPLE_BTN.borderWidth,
-        borderColor: SIMPLE_BTN.borderColor,
-        shadowOffsetX: SIMPLE_BTN.shadowOffsetX,
-        shadowOffsetY: SIMPLE_BTN.shadowOffsetY,
-        shadowBlurRadius: SIMPLE_BTN.shadowBlurRadius,
-        shadowColor: SIMPLE_BTN.shadowColor,
+        buttonText: initialStyle.buttonText,
+        buttonLink: initialStyle.buttonLink,
+        textColor: initialStyle.textColor,
+        borderRadius: initialStyle.borderRadius,
+        borderWidth: initialStyle.borderWidth,
+        borderColor: initialStyle.borderColor,
+        shadowOffsetX: initialStyle.shadowOffsetX,
+        shadowOffsetY: initialStyle.shadowOffsetY,
+        shadowBlurRadius: initialStyle.shadowBlurRadius,
+        shadowColor: initialStyle.shadowColor,
     });
 
     // SimpleBtn 전용 상태
-    const [backgroundColor, setBackgroundColor] = useState(SIMPLE_BTN.backgroundColor);
+    const [backgroundColor, setBackgroundColor] = useState(initialStyle.backgroundColor);
     const handleBackgroundColorChange = baseForm.handleInputChange(setBackgroundColor);
 
     // 전체 버튼 스타일 데이터

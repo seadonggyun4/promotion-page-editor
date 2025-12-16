@@ -21,10 +21,9 @@ const isSimpleBtnStyle = (style: ButtonStyle): style is SimpleBtnStyle => {
 export function ButtonSetModal({ selectedBtn, closeModal }: ButtonSetModalProps) {
     const { t } = useTranslation();
     const { createSampleButton, updateSampleButton, selected } = useElementsStore();
-    const simpleBtnHook = useSimpleBtn();
-    const gradationBtnHook = useGradationBtn();
-
     const isSimpleBtn = isSimpleBtnStyle(selectedBtn);
+    const simpleBtnHook = useSimpleBtn(isSimpleBtn ? selectedBtn : undefined);
+    const gradationBtnHook = useGradationBtn(!isSimpleBtn ? selectedBtn : undefined);
 
     const getButtonStyleData = (): ButtonStyleDataLegacy => {
         if (isSimpleBtn) {

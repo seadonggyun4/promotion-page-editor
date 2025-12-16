@@ -34,6 +34,8 @@ export function ButtonBox() {
                         borderStyle: 'solid',
                         borderColor: style.borderColor,
                         boxShadow: `${style.shadowOffsetX}px ${style.shadowOffsetY}px ${style.shadowBlurRadius}px ${style.shadowColor}`,
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.875rem',
                     }}
                 >
                     {style.buttonText}
@@ -58,6 +60,8 @@ export function ButtonBox() {
                         borderStyle: 'solid',
                         borderColor: style.borderColor,
                         boxShadow: `${style.shadowOffsetX}px ${style.shadowOffsetY}px ${style.shadowBlurRadius}px ${style.shadowColor}`,
+                        padding: '0.5rem 1rem',
+                        fontSize: '0.875rem',
                     }}
                 >
                     {style.buttonText}
@@ -104,9 +108,9 @@ const SectionTitle = styled.h3`
 `;
 
 const ButtonGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 `;
 
 const ButtonWrapper = styled.div`

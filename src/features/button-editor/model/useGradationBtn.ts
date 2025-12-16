@@ -1,26 +1,29 @@
 import { useState } from 'react';
-import { GRADATION_BTN } from '@/shared/constants';
+import { BTN_STYLE, GRADATION_BTN } from '@/shared/constants';
 import { useButtonForm } from './useButtonForm';
+import { GradationBtnStyleData } from '@/shared/types';
 
-export function useGradationBtn() {
+export function useGradationBtn(styleName?: string) {
+    const initialStyle = (styleName ? BTN_STYLE[styleName] : GRADATION_BTN) as GradationBtnStyleData;
+
     const baseForm = useButtonForm({
-        buttonText: GRADATION_BTN.buttonText,
-        buttonLink: GRADATION_BTN.buttonLink,
-        textColor: GRADATION_BTN.textColor,
-        borderRadius: GRADATION_BTN.borderRadius,
-        borderWidth: GRADATION_BTN.borderWidth,
-        borderColor: GRADATION_BTN.borderColor,
-        shadowOffsetX: GRADATION_BTN.shadowOffsetX,
-        shadowOffsetY: GRADATION_BTN.shadowOffsetY,
-        shadowBlurRadius: GRADATION_BTN.shadowBlurRadius,
-        shadowColor: GRADATION_BTN.shadowColor,
+        buttonText: initialStyle.buttonText,
+        buttonLink: initialStyle.buttonLink,
+        textColor: initialStyle.textColor,
+        borderRadius: initialStyle.borderRadius,
+        borderWidth: initialStyle.borderWidth,
+        borderColor: initialStyle.borderColor,
+        shadowOffsetX: initialStyle.shadowOffsetX,
+        shadowOffsetY: initialStyle.shadowOffsetY,
+        shadowBlurRadius: initialStyle.shadowBlurRadius,
+        shadowColor: initialStyle.shadowColor,
     });
 
     // GradationBtn 전용 상태
-    const [gradationColor1, setGradationColor1] = useState(GRADATION_BTN.gradationColor1);
-    const [gradationColor2, setGradationColor2] = useState(GRADATION_BTN.gradationColor2);
-    const [gradationColor3, setGradationColor3] = useState(GRADATION_BTN.gradationColor3);
-    const [gradationColor4, setGradationColor4] = useState(GRADATION_BTN.gradationColor4);
+    const [gradationColor1, setGradationColor1] = useState(initialStyle.gradationColor1);
+    const [gradationColor2, setGradationColor2] = useState(initialStyle.gradationColor2);
+    const [gradationColor3, setGradationColor3] = useState(initialStyle.gradationColor3);
+    const [gradationColor4, setGradationColor4] = useState(initialStyle.gradationColor4);
 
     const handleGradationColor1Change = baseForm.handleInputChange(setGradationColor1);
     const handleGradationColor2Change = baseForm.handleInputChange(setGradationColor2);

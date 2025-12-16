@@ -5,7 +5,7 @@ import { SimpleBtnStyleData, GradationBtnStyleData, ButtonStyleDataLegacy } from
 // ============================================
 
 export const SIMPLE_BTN: SimpleBtnStyleData = {
-    buttonText: 'Simple Button',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#434ce8',
@@ -19,7 +19,7 @@ export const SIMPLE_BTN: SimpleBtnStyleData = {
 };
 
 export const PRIMARY_BTN: SimpleBtnStyleData = {
-    buttonText: 'Get Started',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#2563eb',
@@ -33,7 +33,7 @@ export const PRIMARY_BTN: SimpleBtnStyleData = {
 };
 
 export const SECONDARY_BTN: SimpleBtnStyleData = {
-    buttonText: 'Learn More',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#374151',
     backgroundColor: '#f3f4f6',
@@ -47,7 +47,7 @@ export const SECONDARY_BTN: SimpleBtnStyleData = {
 };
 
 export const SUCCESS_BTN: SimpleBtnStyleData = {
-    buttonText: 'Download Now',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#10b981',
@@ -61,7 +61,7 @@ export const SUCCESS_BTN: SimpleBtnStyleData = {
 };
 
 export const DANGER_BTN: SimpleBtnStyleData = {
-    buttonText: 'Delete',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#ef4444',
@@ -75,7 +75,7 @@ export const DANGER_BTN: SimpleBtnStyleData = {
 };
 
 export const WARNING_BTN: SimpleBtnStyleData = {
-    buttonText: 'Warning',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#f59e0b',
@@ -89,7 +89,7 @@ export const WARNING_BTN: SimpleBtnStyleData = {
 };
 
 export const DARK_BTN: SimpleBtnStyleData = {
-    buttonText: 'Continue',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#1f2937',
@@ -103,7 +103,7 @@ export const DARK_BTN: SimpleBtnStyleData = {
 };
 
 export const OUTLINE_BTN: SimpleBtnStyleData = {
-    buttonText: 'View Details',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#2563eb',
     backgroundColor: '#ffffff',
@@ -117,7 +117,7 @@ export const OUTLINE_BTN: SimpleBtnStyleData = {
 };
 
 export const PILL_BTN: SimpleBtnStyleData = {
-    buttonText: 'Subscribe',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     backgroundColor: '#8b5cf6',
@@ -131,7 +131,7 @@ export const PILL_BTN: SimpleBtnStyleData = {
 };
 
 export const GHOST_BTN: SimpleBtnStyleData = {
-    buttonText: 'Cancel',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#6b7280',
     backgroundColor: '#00000000',
@@ -145,7 +145,7 @@ export const GHOST_BTN: SimpleBtnStyleData = {
 };
 
 export const NEON_BTN: SimpleBtnStyleData = {
-    buttonText: 'Join Now',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#00ff88',
     backgroundColor: '#0a0a0a',
@@ -163,7 +163,7 @@ export const NEON_BTN: SimpleBtnStyleData = {
 // ============================================
 
 export const GRADATION_BTN: GradationBtnStyleData = {
-    buttonText: 'Gradient Button',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#03a9f4',
@@ -180,7 +180,7 @@ export const GRADATION_BTN: GradationBtnStyleData = {
 };
 
 export const SUNSET_BTN: GradationBtnStyleData = {
-    buttonText: 'Explore',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#f97316',
@@ -197,7 +197,7 @@ export const SUNSET_BTN: GradationBtnStyleData = {
 };
 
 export const OCEAN_BTN: GradationBtnStyleData = {
-    buttonText: 'Dive In',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#06b6d4',
@@ -214,7 +214,7 @@ export const OCEAN_BTN: GradationBtnStyleData = {
 };
 
 export const FOREST_BTN: GradationBtnStyleData = {
-    buttonText: 'Discover',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#10b981',
@@ -231,7 +231,7 @@ export const FOREST_BTN: GradationBtnStyleData = {
 };
 
 export const PURPLE_HAZE_BTN: GradationBtnStyleData = {
-    buttonText: 'Try Free',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#8b5cf6',
@@ -248,7 +248,7 @@ export const PURPLE_HAZE_BTN: GradationBtnStyleData = {
 };
 
 export const FIRE_BTN: GradationBtnStyleData = {
-    buttonText: 'Hot Deal',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#ef4444',
@@ -265,7 +265,7 @@ export const FIRE_BTN: GradationBtnStyleData = {
 };
 
 export const AURORA_BTN: GradationBtnStyleData = {
-    buttonText: 'Start Journey',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#22d3ee',
@@ -282,7 +282,7 @@ export const AURORA_BTN: GradationBtnStyleData = {
 };
 
 export const MIDNIGHT_BTN: GradationBtnStyleData = {
-    buttonText: 'Unlock',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#1e3a8a',
@@ -299,7 +299,7 @@ export const MIDNIGHT_BTN: GradationBtnStyleData = {
 };
 
 export const ROSE_GOLD_BTN: GradationBtnStyleData = {
-    buttonText: 'Premium',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#ffffff',
     gradationColor1: '#f43f5e',
@@ -316,7 +316,7 @@ export const ROSE_GOLD_BTN: GradationBtnStyleData = {
 };
 
 export const CYBER_BTN: GradationBtnStyleData = {
-    buttonText: 'Launch App',
+    buttonText: 'BUTTON',
     buttonLink: '',
     textColor: '#00ffff',
     gradationColor1: '#0f172a',
