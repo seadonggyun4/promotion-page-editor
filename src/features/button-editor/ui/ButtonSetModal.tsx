@@ -20,7 +20,7 @@ const isSimpleBtnStyle = (style: ButtonStyle): style is SimpleBtnStyle => {
 
 export function ButtonSetModal({ selectedBtn, closeModal }: ButtonSetModalProps) {
     const { t } = useTranslation();
-    const { createSampleButton, updateSampleButton, selected } = useElementsStore();
+    const { createSampleButton, updateSampleButton } = useElementsStore();
     const isSimpleBtn = isSimpleBtnStyle(selectedBtn);
     const simpleBtnHook = useSimpleBtn(isSimpleBtn ? selectedBtn : undefined);
     const gradationBtnHook = useGradationBtn(!isSimpleBtn ? selectedBtn : undefined);
@@ -80,12 +80,13 @@ export function ButtonSetModal({ selectedBtn, closeModal }: ButtonSetModalProps)
     };
 
     const addButton = () => {
-        if (!selected) return;
+        const currentSelected = useElementsStore.getState().selected;
+        if (!currentSelected) return;
         const styleData = getButtonStyleData();
-        if (selected?.id === '') {
+        if (currentSelected.id === '') {
             createSampleButton(selectedBtn, styleData, Date.now().toString());
         } else {
-            updateSampleButton(selected?.id, selectedBtn, styleData);
+            updateSampleButton(currentSelected.id, selectedBtn, styleData);
         }
         closeModal();
     };
@@ -102,8 +103,8 @@ export function ButtonSetModal({ selectedBtn, closeModal }: ButtonSetModalProps)
                     {isSimpleBtn && <SimpleBtnForm simpleBtnHook={simpleBtnHook} />}
                     {!isSimpleBtn && <GradationBtnForm gradationBtnHook={gradationBtnHook} />}
                     <BtnWrapper>
-                        <button className="activeBtn" onClick={addButton}>{t('common.register')}</button>
-                        <button className="cancelBtn" onClick={closeModal}>{t('common.cancel')}</button>
+                        <button type="button" className="activeBtn" onClick={addButton}>{t('common.register')}</button>
+                        <button type="button" className="cancelBtn" onClick={closeModal}>{t('common.cancel')}</button>
                     </BtnWrapper>
                 </ElementSettingBox>
             </ModalInner>
