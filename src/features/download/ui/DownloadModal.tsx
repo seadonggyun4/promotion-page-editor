@@ -1,10 +1,28 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { Highlight, themes } from 'prism-react-renderer';
 import { FrameworkType, StyleType, ElementData } from '@/shared/types';
 import { generateCode } from '../lib';
+
+// Get language from filename extension
+const getLanguageFromFilename = (filename: string): string => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    const languageMap: Record<string, string> = {
+        html: 'markup',
+        htm: 'markup',
+        css: 'css',
+        scss: 'scss',
+        js: 'javascript',
+        jsx: 'jsx',
+        ts: 'typescript',
+        tsx: 'tsx',
+        vue: 'markup',
+    };
+    return languageMap[ext || ''] || 'markup';
+};
 
 interface DownloadModalProps {
     isOpen: boolean;
@@ -78,6 +96,22 @@ export function DownloadModal({
     const [selectedFramework, setSelectedFramework] = useState<FrameworkType>('vanilla');
     const [selectedStyle, setSelectedStyle] = useState<StyleType>('css');
     const [isDownloading, setIsDownloading] = useState(false);
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+    // Generate code preview
+    const generatedFiles = useMemo(() => {
+        return generateCode(elementsData, selectedFramework, selectedStyle, './promotionPage.jpeg');
+    }, [elementsData, selectedFramework, selectedStyle]);
+
+    const handleCopyCode = async (content: string, index: number) => {
+        try {
+            await navigator.clipboard.writeText(content);
+            setCopiedIndex(index);
+            setTimeout(() => setCopiedIndex(null), 2000);
+        } catch (error) {
+            console.error('Failed to copy:', error);
+        }
+    };
 
     const handleFrameworkChange = (framework: FrameworkType) => {
         setSelectedFramework(framework);
@@ -98,14 +132,6 @@ export function DownloadModal({
             const zip = new JSZip();
             const imageSrc = uploadedImage ? uploadedImage.toString() : backgroundImage;
 
-            // Generate code files
-            const generatedFiles = generateCode(
-                elementsData,
-                selectedFramework,
-                selectedStyle,
-                './promotionPage.jpeg'
-            );
-
             // Add generated files to zip
             generatedFiles.forEach((file) => {
                 zip.file(file.filename, file.content);
@@ -123,7 +149,6 @@ export function DownloadModal({
 
             setTimeout(() => {
                 setIsDownloading(false);
-                onClose();
             }, 2000);
         } catch (error) {
             console.error('Download failed:', error);
@@ -179,6 +204,56 @@ export function DownloadModal({
                         <InfoIcon>i</InfoIcon>
                         <InfoText>{t('download.info')}</InfoText>
                     </InfoBox>
+
+                    <Section>
+                        <CodePreviewContainer>
+                            {generatedFiles.map((file, index) => (
+                                <CodeBlock key={file.filename}>
+                                    <CodeHeader>
+                                        <FileName>{file.filename}</FileName>
+                                        <CopyButton
+                                            onClick={() => handleCopyCode(file.content, index)}
+                                            $copied={copiedIndex === index}
+                                        >
+                                            {copiedIndex === index ? (
+                                                <>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <polyline points="20 6 9 17 4 12" />
+                                                    </svg>
+                                                    <span>{t('download.copied')}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                                    </svg>
+                                                    <span>{t('download.copyCode')}</span>
+                                                </>
+                                            )}
+                                        </CopyButton>
+                                    </CodeHeader>
+                                    <Highlight
+                                        theme={themes.vsDark}
+                                        code={file.content}
+                                        language={getLanguageFromFilename(file.filename)}
+                                    >
+                                        {({ style, tokens, getLineProps, getTokenProps }) => (
+                                            <CodeContent style={style}>
+                                                {tokens.map((line, i) => (
+                                                    <div key={i} {...getLineProps({ line })}>
+                                                        {line.map((token, key) => (
+                                                            <span key={key} {...getTokenProps({ token })} />
+                                                        ))}
+                                                    </div>
+                                                ))}
+                                            </CodeContent>
+                                        )}
+                                    </Highlight>
+                                </CodeBlock>
+                            ))}
+                        </CodePreviewContainer>
+                    </Section>
                 </ModalBody>
 
                 <ModalFooter>
@@ -242,8 +317,11 @@ const ModalOverlay = styled.div`
 const ModalContent = styled.div`
     background: var(--c-background-secondary);
     border-radius: 16px;
-    width: 500px;
+    width: 700px;
     max-width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     animation: slideUp 0.3s ease-out;
 
     @keyframes slideUp {
@@ -289,6 +367,30 @@ const CloseButton = styled.button`
 
 const ModalBody = styled.div`
     padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--c-primary-soft);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.4);
+        border-radius: 4px;
+
+        &:hover {
+            background: rgba(102, 126, 234, 0.6);
+        }
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.4) var(--c-primary-soft);
 `;
 
 const Section = styled.div`
@@ -533,4 +635,96 @@ const DownloadButtonWrapper = styled.button<{ $isDownloading: boolean }>`
             transform: rotate(360deg);
         }
     }
+`;
+
+const CodePreviewContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+`;
+
+const CodeBlock = styled.div`
+    background: var(--c-background-tertiary);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--c-border);
+`;
+
+const CodeHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--c-background-secondary);
+    border-bottom: 1px solid var(--c-border);
+`;
+
+const FileName = styled.span`
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--c-text-secondary);
+    font-family: 'Fira Code', 'Consolas', monospace;
+`;
+
+const CopyButton = styled.button<{ $copied: boolean }>`
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: ${({ $copied }) => ($copied ? 'var(--c-accent-success)' : 'var(--c-text-secondary)')};
+    background: ${({ $copied }) => ($copied ? 'var(--c-accent-success-soft)' : 'transparent')};
+    border: 1px solid ${({ $copied }) => ($copied ? 'var(--c-accent-success)' : 'var(--c-border)')};
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        color: ${({ $copied }) => ($copied ? 'var(--c-accent-success)' : 'var(--c-primary)')};
+        border-color: ${({ $copied }) => ($copied ? 'var(--c-accent-success)' : 'var(--c-primary)')};
+        background: ${({ $copied }) => ($copied ? 'var(--c-accent-success-soft)' : 'var(--c-primary-soft)')};
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+`;
+
+const CodeContent = styled.pre`
+    padding: 1rem;
+    margin: 0;
+    font-size: 0.75rem;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    line-height: 1.6;
+    overflow: auto;
+    max-height: 250px;
+    border-radius: 0 0 12px 12px;
+
+    & > div {
+        white-space: pre;
+    }
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--c-primary-soft);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--c-primary-light, rgba(102, 126, 234, 0.4));
+        border-radius: 4px;
+
+        &:hover {
+            background: var(--c-primary-light, rgba(102, 126, 234, 0.6));
+        }
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.4) var(--c-primary-soft);
 `;
