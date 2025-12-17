@@ -4,7 +4,17 @@ import styled from 'styled-components';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { Highlight, themes } from 'prism-react-renderer';
-import { FrameworkType, StyleType, ElementData } from '@/shared/types';
+import {
+    FrameworkType,
+    StyleType,
+    ElementData,
+    ResponsiveOptions,
+    A11yOptions,
+    SeoOptions,
+    DEFAULT_RESPONSIVE_OPTIONS,
+    DEFAULT_A11Y_OPTIONS,
+    DEFAULT_SEO_OPTIONS,
+} from '@/shared/types';
 import { generateCode } from '../lib';
 
 // Get language from filename extension
@@ -98,10 +108,48 @@ export function DownloadModal({
     const [isDownloading, setIsDownloading] = useState(false);
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-    // Generate code preview
+    // New options state - enabled by default
+    const [responsiveOptions, setResponsiveOptions] = useState<ResponsiveOptions>({
+        ...DEFAULT_RESPONSIVE_OPTIONS,
+        enabled: true,
+    });
+    const [a11yOptions, setA11yOptions] = useState<A11yOptions>({
+        ...DEFAULT_A11Y_OPTIONS,
+        enabled: true,
+    });
+    const [seoOptions, setSeoOptions] = useState<SeoOptions>({
+        ...DEFAULT_SEO_OPTIONS,
+        enabled: true,
+    });
+
+    // Expanded sections state
+    const [expandedSections, setExpandedSections] = useState({
+        responsive: true,
+        a11y: true,
+        seo: true,
+    });
+
+    const toggleSection = (section: 'responsive' | 'a11y' | 'seo') => {
+        setExpandedSections(prev => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
+    };
+
+    // Generate code preview with options
     const generatedFiles = useMemo(() => {
-        return generateCode(elementsData, selectedFramework, selectedStyle, './promotionPage.jpeg');
-    }, [elementsData, selectedFramework, selectedStyle]);
+        return generateCode(
+            elementsData,
+            selectedFramework,
+            selectedStyle,
+            './promotionPage.jpeg',
+            {
+                responsive: responsiveOptions,
+                a11y: a11yOptions,
+                seo: seoOptions,
+            }
+        );
+    }, [elementsData, selectedFramework, selectedStyle, responsiveOptions, a11yOptions, seoOptions]);
 
     const handleCopyCode = async (content: string, index: number) => {
         try {
@@ -198,6 +246,208 @@ export function DownloadModal({
                                     </StyleButton>
                                 ))}
                         </StyleGrid>
+                    </Section>
+
+                    {/* Code Quality Options */}
+                    <Section>
+                        <SectionTitle>{t('download.codeQuality')}</SectionTitle>
+
+                        {/* Responsive Option */}
+                        <OptionCard>
+                            <OptionHeader onClick={() => toggleSection('responsive')}>
+                                <OptionToggle>
+                                    <ToggleSwitch
+                                        $isOn={responsiveOptions.enabled}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setResponsiveOptions(prev => ({ ...prev, enabled: !prev.enabled }));
+                                        }}
+                                    >
+                                        <ToggleThumb $isOn={responsiveOptions.enabled} />
+                                    </ToggleSwitch>
+                                    <OptionLabel>{t('download.responsive')}</OptionLabel>
+                                </OptionToggle>
+                                <ExpandIcon $expanded={expandedSections.responsive}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </ExpandIcon>
+                            </OptionHeader>
+                            {expandedSections.responsive && (
+                                <OptionDetails $disabled={!responsiveOptions.enabled}>
+                                    <OptionDescription>{t('download.responsiveDesc')}</OptionDescription>
+                                    <BreakpointInputs>
+                                        <BreakpointInput>
+                                            <label>{t('download.mobileBreakpoint')}</label>
+                                            <input
+                                                type="number"
+                                                value={responsiveOptions.breakpoints.mobile}
+                                                onChange={(e) => setResponsiveOptions(prev => ({
+                                                    ...prev,
+                                                    breakpoints: { ...prev.breakpoints, mobile: parseInt(e.target.value) || 480 }
+                                                }))}
+                                            />
+                                            <span>px</span>
+                                        </BreakpointInput>
+                                        <BreakpointInput>
+                                            <label>{t('download.tabletBreakpoint')}</label>
+                                            <input
+                                                type="number"
+                                                value={responsiveOptions.breakpoints.tablet}
+                                                onChange={(e) => setResponsiveOptions(prev => ({
+                                                    ...prev,
+                                                    breakpoints: { ...prev.breakpoints, tablet: parseInt(e.target.value) || 768 }
+                                                }))}
+                                            />
+                                            <span>px</span>
+                                        </BreakpointInput>
+                                    </BreakpointInputs>
+                                </OptionDetails>
+                            )}
+                        </OptionCard>
+
+                        {/* Accessibility Option */}
+                        <OptionCard>
+                            <OptionHeader onClick={() => toggleSection('a11y')}>
+                                <OptionToggle>
+                                    <ToggleSwitch
+                                        $isOn={a11yOptions.enabled}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setA11yOptions(prev => ({ ...prev, enabled: !prev.enabled }));
+                                        }}
+                                    >
+                                        <ToggleThumb $isOn={a11yOptions.enabled} />
+                                    </ToggleSwitch>
+                                    <OptionLabel>{t('download.a11y')}</OptionLabel>
+                                </OptionToggle>
+                                <ExpandIcon $expanded={expandedSections.a11y}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </ExpandIcon>
+                            </OptionHeader>
+                            {expandedSections.a11y && (
+                                <OptionDetails $disabled={!a11yOptions.enabled}>
+                                    <OptionDescription>{t('download.a11yDesc')}</OptionDescription>
+                                    <CheckboxGroup>
+                                        <CheckboxItem>
+                                            <input
+                                                type="checkbox"
+                                                checked={a11yOptions.includeAriaLabels}
+                                                onChange={(e) => setA11yOptions(prev => ({
+                                                    ...prev,
+                                                    includeAriaLabels: e.target.checked
+                                                }))}
+                                            />
+                                            <span>{t('download.ariaLabels')}</span>
+                                        </CheckboxItem>
+                                        <CheckboxItem>
+                                            <input
+                                                type="checkbox"
+                                                checked={a11yOptions.includeFocusStyles}
+                                                onChange={(e) => setA11yOptions(prev => ({
+                                                    ...prev,
+                                                    includeFocusStyles: e.target.checked
+                                                }))}
+                                            />
+                                            <span>{t('download.focusStyles')}</span>
+                                        </CheckboxItem>
+                                        <CheckboxItem>
+                                            <input
+                                                type="checkbox"
+                                                checked={a11yOptions.useSemanticButtons}
+                                                onChange={(e) => setA11yOptions(prev => ({
+                                                    ...prev,
+                                                    useSemanticButtons: e.target.checked
+                                                }))}
+                                            />
+                                            <span>{t('download.semanticButtons')}</span>
+                                        </CheckboxItem>
+                                    </CheckboxGroup>
+                                </OptionDetails>
+                            )}
+                        </OptionCard>
+
+                        {/* SEO Option (only for vanilla HTML) */}
+                        {selectedFramework === 'vanilla' && (
+                            <OptionCard>
+                                <OptionHeader onClick={() => toggleSection('seo')}>
+                                    <OptionToggle>
+                                        <ToggleSwitch
+                                            $isOn={seoOptions.enabled}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSeoOptions(prev => ({ ...prev, enabled: !prev.enabled }));
+                                            }}
+                                        >
+                                            <ToggleThumb $isOn={seoOptions.enabled} />
+                                        </ToggleSwitch>
+                                        <OptionLabel>{t('download.seo')}</OptionLabel>
+                                    </OptionToggle>
+                                    <ExpandIcon $expanded={expandedSections.seo}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="6 9 12 15 18 9" />
+                                        </svg>
+                                    </ExpandIcon>
+                                </OptionHeader>
+                                {expandedSections.seo && (
+                                    <OptionDetails $disabled={!seoOptions.enabled}>
+                                        <OptionDescription>{t('download.seoDesc')}</OptionDescription>
+                                        <SeoInputs>
+                                            <SeoInputGroup>
+                                                <label>{t('download.seoTitle')}</label>
+                                                <input
+                                                    type="text"
+                                                    value={seoOptions.title}
+                                                    onChange={(e) => setSeoOptions(prev => ({
+                                                        ...prev,
+                                                        title: e.target.value
+                                                    }))}
+                                                    placeholder="Promotion Page"
+                                                />
+                                            </SeoInputGroup>
+                                            <SeoInputGroup>
+                                                <label>{t('download.seoDescription')}</label>
+                                                <textarea
+                                                    value={seoOptions.description}
+                                                    onChange={(e) => setSeoOptions(prev => ({
+                                                        ...prev,
+                                                        description: e.target.value
+                                                    }))}
+                                                    placeholder={t('download.seoDescriptionPlaceholder')}
+                                                    rows={2}
+                                                />
+                                            </SeoInputGroup>
+                                            <SeoInputGroup>
+                                                <label>{t('download.ogImage')}</label>
+                                                <input
+                                                    type="text"
+                                                    value={seoOptions.ogImage}
+                                                    onChange={(e) => setSeoOptions(prev => ({
+                                                        ...prev,
+                                                        ogImage: e.target.value
+                                                    }))}
+                                                    placeholder="https://example.com/og-image.jpg"
+                                                />
+                                            </SeoInputGroup>
+                                            <SeoInputGroup>
+                                                <label>{t('download.canonical')}</label>
+                                                <input
+                                                    type="text"
+                                                    value={seoOptions.canonical}
+                                                    onChange={(e) => setSeoOptions(prev => ({
+                                                        ...prev,
+                                                        canonical: e.target.value
+                                                    }))}
+                                                    placeholder="https://example.com/promo"
+                                                />
+                                            </SeoInputGroup>
+                                        </SeoInputs>
+                                    </OptionDetails>
+                                )}
+                            </OptionCard>
+                        )}
                     </Section>
 
                     <InfoBox>
@@ -456,6 +706,182 @@ const StyleButton = styled.button<{ $isSelected: boolean }>`
     &:hover {
         border-color: var(--c-primary);
         background: var(--c-primary-soft);
+    }
+`;
+
+// New Option Styles
+const OptionCard = styled.div`
+    background: var(--c-background-tertiary);
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+`;
+
+const OptionHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+        background: rgba(102, 126, 234, 0.05);
+    }
+`;
+
+const OptionToggle = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+`;
+
+const ToggleSwitch = styled.div<{ $isOn: boolean }>`
+    width: 44px;
+    height: 24px;
+    background: ${({ $isOn }) => ($isOn ? 'var(--c-primary)' : 'rgba(128, 128, 128, 0.4)')};
+    border-radius: 12px;
+    padding: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+`;
+
+const ToggleThumb = styled.div<{ $isOn: boolean }>`
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    transform: translateX(${({ $isOn }) => ($isOn ? '20px' : '0')});
+`;
+
+const OptionLabel = styled.span`
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--c-text-primary);
+`;
+
+const ExpandIcon = styled.div<{ $expanded: boolean }>`
+    color: var(--c-text-secondary);
+    transition: transform 0.2s;
+    transform: rotate(${({ $expanded }) => ($expanded ? '180deg' : '0')});
+`;
+
+const OptionDetails = styled.div<{ $disabled?: boolean }>`
+    padding: 0 1rem 1rem;
+    border-top: 1px solid var(--c-border);
+    opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
+    pointer-events: ${({ $disabled }) => ($disabled ? 'none' : 'auto')};
+    transition: opacity 0.2s;
+`;
+
+const OptionDescription = styled.p`
+    font-size: 0.8rem;
+    color: var(--c-text-secondary);
+    margin: 0.75rem 0;
+    line-height: 1.5;
+`;
+
+const BreakpointInputs = styled.div`
+    display: flex;
+    gap: 1rem;
+`;
+
+const BreakpointInput = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+        font-size: 0.8rem;
+        color: var(--c-text-secondary);
+    }
+
+    input {
+        width: 70px;
+        padding: 0.375rem 0.5rem;
+        border: 1px solid var(--c-border);
+        border-radius: 6px;
+        background: var(--c-background-secondary);
+        color: var(--c-text-primary);
+        font-size: 0.8rem;
+
+        &:focus {
+            outline: none;
+            border-color: var(--c-primary);
+        }
+    }
+
+    span {
+        font-size: 0.8rem;
+        color: var(--c-text-secondary);
+    }
+`;
+
+const CheckboxGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+`;
+
+const CheckboxItem = styled.label`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    input {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--c-primary);
+    }
+
+    span {
+        font-size: 0.85rem;
+        color: var(--c-text-primary);
+    }
+`;
+
+const SeoInputs = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+`;
+
+const SeoInputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    label {
+        font-size: 0.8rem;
+        color: var(--c-text-secondary);
+    }
+
+    input, textarea {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--c-border);
+        border-radius: 8px;
+        background: var(--c-background-secondary);
+        color: var(--c-text-primary);
+        font-size: 0.85rem;
+        font-family: inherit;
+
+        &:focus {
+            outline: none;
+            border-color: var(--c-primary);
+        }
+
+        &::placeholder {
+            color: var(--c-text-secondary);
+            opacity: 0.6;
+        }
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 60px;
     }
 `;
 

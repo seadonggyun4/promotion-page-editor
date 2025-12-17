@@ -1,8 +1,24 @@
-import { ElementData, FrameworkType, StyleType } from '@/shared/types';
+import {
+    ElementData,
+    FrameworkType,
+    StyleType,
+    ResponsiveOptions,
+    A11yOptions,
+    SeoOptions,
+    DEFAULT_RESPONSIVE_OPTIONS,
+    DEFAULT_A11Y_OPTIONS,
+    DEFAULT_SEO_OPTIONS,
+} from '@/shared/types';
 
 interface GeneratedCode {
     filename: string;
     content: string;
+}
+
+interface GenerateOptions {
+    responsive?: ResponsiveOptions;
+    a11y?: A11yOptions;
+    seo?: SeoOptions;
 }
 
 // Helper to check if button is gradient type
@@ -10,10 +26,162 @@ const isGradientButton = (style: string): boolean => {
     return ['GradationBtn', 'SunsetBtn', 'OceanBtn', 'ForestBtn', 'PurpleHazeBtn', 'FireBtn', 'AuroraBtn', 'MidnightBtn', 'RoseGoldBtn', 'CyberBtn'].includes(style);
 };
 
+// Generate focus styles for accessibility
+const generateFocusStyles = (includeFocusStyles: boolean): string => {
+    if (!includeFocusStyles) return '';
+    return `
+    &:focus {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }
+
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }`;
+};
+
+// Generate focus styles for CSS (non-SCSS)
+const generateFocusStylesCSS = (selector: string, includeFocusStyles: boolean): string => {
+    if (!includeFocusStyles) return '';
+    return `
+${selector}:focus {
+    outline: 2px solid #4A90D9;
+    outline-offset: 2px;
+}
+
+${selector}:focus:not(:focus-visible) {
+    outline: none;
+}
+
+${selector}:focus-visible {
+    outline: 2px solid #4A90D9;
+    outline-offset: 2px;
+}`;
+};
+
+// Generate responsive media queries
+const generateResponsiveCSS = (
+    element: ElementData,
+    index: number,
+    responsive: ResponsiveOptions
+): string => {
+    if (!responsive.enabled) return '';
+
+    const { styleData } = element;
+    const baseWidth = styleData.width || 200;
+    const baseHeight = styleData.height || 50;
+
+    return `
+/* Tablet */
+@media (max-width: ${responsive.breakpoints.tablet}px) {
+    .button-${index} {
+        width: ${Math.round(baseWidth * 0.85)}px;
+        height: ${Math.round(baseHeight * 0.9)}px;
+        font-size: 0.9em;
+    }
+}
+
+/* Mobile */
+@media (max-width: ${responsive.breakpoints.mobile}px) {
+    .button-${index} {
+        width: ${Math.round(baseWidth * 0.7)}px;
+        height: ${Math.round(baseHeight * 0.8)}px;
+        font-size: 0.8em;
+    }
+}`;
+};
+
+// Generate SEO meta tags for HTML
+const generateSeoMetaTags = (seo: SeoOptions): string => {
+    if (!seo.enabled) {
+        return `<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotion Page</title>`;
+    }
+
+    let metaTags = `<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Primary Meta Tags -->
+    <title>${seo.title}</title>
+    <meta name="title" content="${seo.title}">`;
+
+    if (seo.description) {
+        metaTags += `
+    <meta name="description" content="${seo.description}">`;
+    }
+
+    metaTags += `
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="${seo.title}">`;
+
+    if (seo.description) {
+        metaTags += `
+    <meta property="og:description" content="${seo.description}">`;
+    }
+
+    if (seo.ogImage) {
+        metaTags += `
+    <meta property="og:image" content="${seo.ogImage}">`;
+    }
+
+    if (seo.canonical) {
+        metaTags += `
+    <meta property="og:url" content="${seo.canonical}">`;
+    }
+
+    metaTags += `
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${seo.title}">`;
+
+    if (seo.description) {
+        metaTags += `
+    <meta name="twitter:description" content="${seo.description}">`;
+    }
+
+    if (seo.ogImage) {
+        metaTags += `
+    <meta name="twitter:image" content="${seo.ogImage}">`;
+    }
+
+    if (seo.canonical) {
+        metaTags += `
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="${seo.canonical}">`;
+    }
+
+    return metaTags;
+};
+
+// Generate aria attributes for accessibility
+const generateAriaAttributes = (element: ElementData, a11y: A11yOptions): string => {
+    if (!a11y.enabled || !a11y.includeAriaLabels) return '';
+
+    const buttonText = element.styleData.buttonText || 'Button';
+    return ` aria-label="${buttonText}" role="button"`;
+};
+
 // Generate CSS styles for a button
-const generateButtonCSS = (element: ElementData, index: number): string => {
+const generateButtonCSS = (
+    element: ElementData,
+    index: number,
+    options: GenerateOptions = {}
+): string => {
     const { styleData, x, y } = element;
     const isGradient = isGradientButton(element.style);
+    const a11y = options.a11y || DEFAULT_A11Y_OPTIONS;
+    const responsive = options.responsive || DEFAULT_RESPONSIVE_OPTIONS;
 
     const baseStyles = `
 .button-${index} {
@@ -43,13 +211,46 @@ const generateButtonCSS = (element: ElementData, index: number): string => {
     transform: scale(1.02);
 }`;
 
-    return baseStyles;
+    const focusStyles = generateFocusStylesCSS(`.button-${index}`, a11y.enabled && a11y.includeFocusStyles);
+    const responsiveStyles = generateResponsiveCSS(element, index, responsive);
+
+    return baseStyles + focusStyles + responsiveStyles;
 };
 
 // Generate SCSS styles
-const generateButtonSCSS = (element: ElementData, index: number): string => {
+const generateButtonSCSS = (
+    element: ElementData,
+    index: number,
+    options: GenerateOptions = {}
+): string => {
     const { styleData, x, y } = element;
     const isGradient = isGradientButton(element.style);
+    const a11y = options.a11y || DEFAULT_A11Y_OPTIONS;
+    const responsive = options.responsive || DEFAULT_RESPONSIVE_OPTIONS;
+
+    const focusStyles = generateFocusStyles(a11y.enabled && a11y.includeFocusStyles);
+
+    let responsiveStyles = '';
+    if (responsive.enabled) {
+        const baseWidth = styleData.width || 200;
+        const baseHeight = styleData.height || 50;
+
+        responsiveStyles = `
+
+    // Tablet
+    @media (max-width: ${responsive.breakpoints.tablet}px) {
+        width: ${Math.round(baseWidth * 0.85)}px;
+        height: ${Math.round(baseHeight * 0.9)}px;
+        font-size: 0.9em;
+    }
+
+    // Mobile
+    @media (max-width: ${responsive.breakpoints.mobile}px) {
+        width: ${Math.round(baseWidth * 0.7)}px;
+        height: ${Math.round(baseHeight * 0.8)}px;
+        font-size: 0.8em;
+    }`;
+    }
 
     return `
 .button-${index} {
@@ -76,16 +277,18 @@ const generateButtonSCSS = (element: ElementData, index: number): string => {
 
     &:hover {
         transform: scale(1.02);
-    }
+    }${focusStyles}${responsiveStyles}
 }`;
 };
 
 // Generate Tailwind classes
-const generateTailwindClasses = (): string => {
-    // Note: Tailwind can't handle all custom values, so we use inline styles for specific values
-    const baseClasses = 'absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02]';
+const generateTailwindClasses = (a11y: A11yOptions): string => {
+    const baseClasses = 'absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02] no-underline';
+    const focusClasses = a11y.enabled && a11y.includeFocusStyles
+        ? ' focus:outline-2 focus:outline-blue-500 focus:outline-offset-2 focus-visible:outline-2 focus-visible:outline-blue-500'
+        : '';
 
-    return baseClasses;
+    return baseClasses + focusClasses;
 };
 
 // Generate inline styles for Tailwind (values that can't be expressed in Tailwind)
@@ -111,13 +314,41 @@ const generateTailwindInlineStyles = (element: ElementData): string => {
     return JSON.stringify(styles);
 };
 
+// Generate responsive container CSS
+const generateResponsiveContainerCSS = (responsive: ResponsiveOptions): string => {
+    if (!responsive.enabled) return '';
+
+    return `
+
+/* Responsive Container */
+@media (max-width: ${responsive.breakpoints.tablet}px) {
+    .promo-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: ${responsive.breakpoints.mobile}px) {
+    .promo-container {
+        max-width: 100%;
+    }
+
+    .buttons-container {
+        /* Buttons scale with container */
+    }
+}`;
+};
+
 // Vanilla HTML Generator
 export const generateVanillaHTML = (
     elements: ElementData[],
     styleType: StyleType,
-    imageSrc: string
+    imageSrc: string,
+    options: GenerateOptions = {}
 ): GeneratedCode[] => {
     const files: GeneratedCode[] = [];
+    const a11y = options.a11y || DEFAULT_A11Y_OPTIONS;
+    const seo = options.seo || DEFAULT_SEO_OPTIONS;
+    const responsive = options.responsive || DEFAULT_RESPONSIVE_OPTIONS;
 
     // Generate styles
     let stylesContent = '';
@@ -125,11 +356,11 @@ export const generateVanillaHTML = (
 
     elements.forEach((element, index) => {
         if (styleType === 'scss') {
-            stylesContent += generateButtonSCSS(element, index);
+            stylesContent += generateButtonSCSS(element, index, options);
         } else if (styleType === 'tailwind') {
             // Tailwind uses inline styles mostly
         } else {
-            stylesContent += generateButtonCSS(element, index);
+            stylesContent += generateButtonCSS(element, index, options);
         }
     });
 
@@ -155,41 +386,54 @@ export const generateVanillaHTML = (
     height: 100%;
 }`;
 
+    const responsiveContainerStyles = generateResponsiveContainerCSS(responsive);
+
     if (styleType !== 'tailwind') {
         files.push({
             filename: `styles.${styleExtension}`,
-            content: containerStyles + stylesContent,
+            content: containerStyles + responsiveContainerStyles + stylesContent,
         });
     }
 
     // Generate HTML
     const buttonsHTML = elements.map((element, index) => {
+        const ariaAttrs = generateAriaAttributes(element, a11y);
+        const buttonTag = a11y.enabled && a11y.useSemanticButtons ? 'button' : 'a';
+        const linkAttr = buttonTag === 'a'
+            ? `href="${element.styleData.buttonLink}" target="_blank" rel="noopener noreferrer"`
+            : `onclick="window.open('${element.styleData.buttonLink}', '_blank')"`;
+
         if (styleType === 'tailwind') {
-            const classes = generateTailwindClasses();
+            const classes = generateTailwindClasses(a11y);
             const inlineStyles = generateTailwindInlineStyles(element);
-            return `    <a href="${element.styleData.buttonLink}" target="_blank" class="${classes}" style='${inlineStyles.replace(/"/g, "'")}'>${element.styleData.buttonText}</a>`;
+            return `    <${buttonTag} ${linkAttr} class="${classes}" style='${inlineStyles.replace(/"/g, "'")}'${ariaAttrs}>${element.styleData.buttonText}</${buttonTag}>`;
         }
-        return `    <a href="${element.styleData.buttonLink}" target="_blank" class="button-${index}">${element.styleData.buttonText}</a>`;
+        return `    <${buttonTag} ${linkAttr} class="button-${index}"${ariaAttrs}>${element.styleData.buttonText}</${buttonTag}>`;
     }).join('\n');
 
+    // Generate image alt text
+    const imageAlt = a11y.enabled && a11y.includeAriaLabels
+        ? 'Promotion page banner image'
+        : 'Promotion';
+
+    const seoMetaTags = generateSeoMetaTags(seo);
+
     const htmlContent = `<!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promotion Page</title>
+    ${seoMetaTags}
     ${styleType === 'tailwind'
         ? '<script src="https://cdn.tailwindcss.com"></script>'
         : `<link rel="stylesheet" href="styles.${styleExtension}">`
     }
 </head>
 <body>
-    <div class="promo-container"${styleType === 'tailwind' ? ' style="position: relative; width: 100%; max-width: 100%;"' : ''}>
-        <img src="${imageSrc}" alt="Promotion" class="promo-image"${styleType === 'tailwind' ? ' style="width: 100%; height: auto; display: block;"' : ''} />
-        <div class="buttons-container"${styleType === 'tailwind' ? ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"' : ''}>
+    <main class="promo-container"${styleType === 'tailwind' ? ' style="position: relative; width: 100%; max-width: 100%;"' : ''}>
+        <img src="${imageSrc}" alt="${imageAlt}" class="promo-image"${styleType === 'tailwind' ? ' style="width: 100%; height: auto; display: block;"' : ''} />
+        <div class="buttons-container"${styleType === 'tailwind' ? ' style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"' : ''}${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonsHTML}
         </div>
-    </div>
+    </main>
 </body>
 </html>`;
 
@@ -205,24 +449,72 @@ ${buttonsHTML}
 export const generateReactCode = (
     elements: ElementData[],
     styleType: StyleType,
-    _imageSrc: string
+    _imageSrc: string,
+    options: GenerateOptions = {}
 ): GeneratedCode[] => {
     const files: GeneratedCode[] = [];
+    const a11y = options.a11y || DEFAULT_A11Y_OPTIONS;
+    const responsive = options.responsive || DEFAULT_RESPONSIVE_OPTIONS;
+
+    // Generate aria props helper
+    const getAriaProps = (element: ElementData): string => {
+        if (!a11y.enabled || !a11y.includeAriaLabels) return '';
+        return `aria-label="${element.styleData.buttonText || 'Button'}" role="button"`;
+    };
 
     if (styleType === 'styled-components') {
+        const focusStylesBlock = a11y.enabled && a11y.includeFocusStyles ? `
+
+    &:focus {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }
+
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }` : '';
+
         const buttonsCode = elements.map((element, index) => {
             const { styleData, x, y } = element;
             const isGradient = isGradientButton(element.style);
+            const baseWidth = styleData.width || 200;
+            const baseHeight = styleData.height || 50;
 
-            return `const Button${index} = styled.a\`
+            let responsiveStyles = '';
+            if (responsive.enabled) {
+                responsiveStyles = `
+
+    // Tablet
+    @media (max-width: ${responsive.breakpoints.tablet}px) {
+        width: ${Math.round(baseWidth * 0.85)}px;
+        height: ${Math.round(baseHeight * 0.9)}px;
+        font-size: 0.9em;
+    }
+
+    // Mobile
+    @media (max-width: ${responsive.breakpoints.mobile}px) {
+        width: ${Math.round(baseWidth * 0.7)}px;
+        height: ${Math.round(baseHeight * 0.8)}px;
+        font-size: 0.8em;
+    }`;
+            }
+
+            const TagType = a11y.enabled && a11y.useSemanticButtons ? 'button' : 'a';
+
+            return `const Button${index} = styled.${TagType}\`
     position: absolute;
     top: ${y}%;
     left: ${x}%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: ${styleData.width || 200}px;
-    height: ${styleData.height || 50}px;
+    width: ${baseWidth}px;
+    height: ${baseHeight}px;
     color: ${styleData.textColor};
     ${isGradient
         ? `background: linear-gradient(135deg, ${styleData.gradationColor1}, ${styleData.gradationColor2}, ${styleData.gradationColor3}, ${styleData.gradationColor4});`
@@ -238,20 +530,28 @@ export const generateReactCode = (
 
     &:hover {
         transform: scale(1.02);
-    }
+    }${focusStylesBlock}${responsiveStyles}
 \`;`;
         }).join('\n\n');
 
-        const buttonElements = elements.map((element, index) =>
-            `            <Button${index} href="${element.styleData.buttonLink}" target="_blank">${element.styleData.buttonText}</Button${index}>`
-        ).join('\n');
+        const buttonElements = elements.map((element, index) => {
+            const ariaProps = getAriaProps(element);
+            if (a11y.enabled && a11y.useSemanticButtons) {
+                return `            <Button${index} onClick={() => window.open('${element.styleData.buttonLink}', '_blank')} ${ariaProps}>${element.styleData.buttonText}</Button${index}>`;
+            }
+            return `            <Button${index} href="${element.styleData.buttonLink}" target="_blank" rel="noopener noreferrer" ${ariaProps}>${element.styleData.buttonText}</Button${index}>`;
+        }).join('\n');
+
+        const imageAlt = a11y.enabled && a11y.includeAriaLabels
+            ? 'Promotion page banner image'
+            : 'Promotion';
 
         const componentContent = `import styled from 'styled-components';
 import promoImage from './promotionPage.jpeg';
 
 ${buttonsCode}
 
-const Container = styled.div\`
+const Container = styled.main\`
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -274,8 +574,8 @@ const ButtonsContainer = styled.div\`
 export function PromoPage() {
     return (
         <Container>
-            <PromoImage src={promoImage} alt="Promotion" />
-            <ButtonsContainer>
+            <PromoImage src={promoImage} alt="${imageAlt}" />
+            <ButtonsContainer${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonElements}
             </ButtonsContainer>
         </Container>
@@ -289,9 +589,46 @@ ${buttonElements}
         });
 
     } else if (styleType === 'emotion') {
+        const focusStylesBlock = a11y.enabled && a11y.includeFocusStyles ? `
+
+    &:focus {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }
+
+    &:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid #4A90D9;
+        outline-offset: 2px;
+    }` : '';
+
         const buttonsCode = elements.map((element, index) => {
             const { styleData, x, y } = element;
             const isGradient = isGradientButton(element.style);
+            const baseWidth = styleData.width || 200;
+            const baseHeight = styleData.height || 50;
+
+            let responsiveStyles = '';
+            if (responsive.enabled) {
+                responsiveStyles = `
+
+    // Tablet
+    @media (max-width: ${responsive.breakpoints.tablet}px) {
+        width: ${Math.round(baseWidth * 0.85)}px;
+        height: ${Math.round(baseHeight * 0.9)}px;
+        font-size: 0.9em;
+    }
+
+    // Mobile
+    @media (max-width: ${responsive.breakpoints.mobile}px) {
+        width: ${Math.round(baseWidth * 0.7)}px;
+        height: ${Math.round(baseHeight * 0.8)}px;
+        font-size: 0.8em;
+    }`;
+            }
 
             return `const button${index}Style = css\`
     position: absolute;
@@ -300,8 +637,8 @@ ${buttonElements}
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: ${styleData.width || 200}px;
-    height: ${styleData.height || 50}px;
+    width: ${baseWidth}px;
+    height: ${baseHeight}px;
     color: ${styleData.textColor};
     ${isGradient
         ? `background: linear-gradient(135deg, ${styleData.gradationColor1}, ${styleData.gradationColor2}, ${styleData.gradationColor3}, ${styleData.gradationColor4});`
@@ -317,13 +654,21 @@ ${buttonElements}
 
     &:hover {
         transform: scale(1.02);
-    }
+    }${focusStylesBlock}${responsiveStyles}
 \`;`;
         }).join('\n\n');
 
-        const buttonElements = elements.map((element, index) =>
-            `            <a href="${element.styleData.buttonLink}" target="_blank" css={button${index}Style}>${element.styleData.buttonText}</a>`
-        ).join('\n');
+        const buttonElements = elements.map((element, index) => {
+            const ariaProps = getAriaProps(element);
+            if (a11y.enabled && a11y.useSemanticButtons) {
+                return `            <button onClick={() => window.open('${element.styleData.buttonLink}', '_blank')} css={button${index}Style} ${ariaProps}>${element.styleData.buttonText}</button>`;
+            }
+            return `            <a href="${element.styleData.buttonLink}" target="_blank" rel="noopener noreferrer" css={button${index}Style} ${ariaProps}>${element.styleData.buttonText}</a>`;
+        }).join('\n');
+
+        const imageAlt = a11y.enabled && a11y.includeAriaLabels
+            ? 'Promotion page banner image'
+            : 'Promotion';
 
         const componentContent = `/** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
@@ -353,12 +698,12 @@ const buttonsContainerStyle = css\`
 
 export function PromoPage() {
     return (
-        <div css={containerStyle}>
-            <img src={promoImage} alt="Promotion" css={imageStyle} />
-            <div css={buttonsContainerStyle}>
+        <main css={containerStyle}>
+            <img src={promoImage} alt="${imageAlt}" css={imageStyle} />
+            <div css={buttonsContainerStyle}${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonElements}
             </div>
-        </div>
+        </main>
     );
 }
 `;
@@ -388,26 +733,52 @@ ${buttonElements}
                 boxShadow: `${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}`,
             };
 
+            const focusClasses = a11y.enabled && a11y.includeFocusStyles
+                ? ' focus:outline-2 focus:outline-blue-500 focus:outline-offset-2'
+                : '';
+            const ariaProps = getAriaProps(element);
+
+            if (a11y.enabled && a11y.useSemanticButtons) {
+                return `            <button
+                onClick={() => window.open('${element.styleData.buttonLink}', '_blank')}
+                className="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02]${focusClasses}"
+                style={${JSON.stringify(style)}}
+                ${ariaProps}
+            >
+                ${element.styleData.buttonText}
+            </button>`;
+            }
+
             return `            <a
                 href="${element.styleData.buttonLink}"
                 target="_blank"
-                className="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02] no-underline"
+                rel="noopener noreferrer"
+                className="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02] no-underline${focusClasses}"
                 style={${JSON.stringify(style)}}
+                ${ariaProps}
             >
                 ${element.styleData.buttonText}
             </a>`;
         }).join('\n');
 
+        const imageAlt = a11y.enabled && a11y.includeAriaLabels
+            ? 'Promotion page banner image'
+            : 'Promotion';
+
+        const responsiveClasses = responsive.enabled
+            ? 'relative w-full max-w-full md:max-w-4xl lg:max-w-6xl mx-auto'
+            : 'relative w-full max-w-full';
+
         const componentContent = `import promoImage from './promotionPage.jpeg';
 
 export function PromoPage() {
     return (
-        <div className="relative w-full max-w-full">
-            <img src={promoImage} alt="Promotion" className="w-full h-auto block" />
-            <div className="absolute top-0 left-0 w-full h-full">
+        <main className="${responsiveClasses}">
+            <img src={promoImage} alt="${imageAlt}" className="w-full h-auto block" />
+            <div className="absolute top-0 left-0 w-full h-full"${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonElements}
             </div>
-        </div>
+        </main>
     );
 }
 `;
@@ -441,11 +812,14 @@ ${buttonElements}
     height: 100%;
 }`;
 
+        const responsiveContainerStyles = generateResponsiveContainerCSS(responsive);
+        stylesContent += responsiveContainerStyles;
+
         elements.forEach((element, index) => {
             if (styleType === 'scss') {
-                stylesContent += generateButtonSCSS(element, index);
+                stylesContent += generateButtonSCSS(element, index, options);
             } else {
-                stylesContent += generateButtonCSS(element, index);
+                stylesContent += generateButtonCSS(element, index, options);
             }
         });
 
@@ -454,21 +828,29 @@ ${buttonElements}
             content: stylesContent,
         });
 
-        const buttonElements = elements.map((element, index) =>
-            `            <a href="${element.styleData.buttonLink}" target="_blank" className="button-${index}">${element.styleData.buttonText}</a>`
-        ).join('\n');
+        const buttonElements = elements.map((element, index) => {
+            const ariaProps = getAriaProps(element);
+            if (a11y.enabled && a11y.useSemanticButtons) {
+                return `            <button onClick={() => window.open('${element.styleData.buttonLink}', '_blank')} className="button-${index}" ${ariaProps}>${element.styleData.buttonText}</button>`;
+            }
+            return `            <a href="${element.styleData.buttonLink}" target="_blank" rel="noopener noreferrer" className="button-${index}" ${ariaProps}>${element.styleData.buttonText}</a>`;
+        }).join('\n');
+
+        const imageAlt = a11y.enabled && a11y.includeAriaLabels
+            ? 'Promotion page banner image'
+            : 'Promotion';
 
         const componentContent = `import './PromoPage.${styleExtension}';
 import promoImage from './promotionPage.jpeg';
 
 export function PromoPage() {
     return (
-        <div className="promo-container">
-            <img src={promoImage} alt="Promotion" className="promo-image" />
-            <div className="buttons-container">
+        <main className="promo-container">
+            <img src={promoImage} alt="${imageAlt}" className="promo-image" />
+            <div className="buttons-container"${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonElements}
             </div>
-        </div>
+        </main>
     );
 }
 `;
@@ -486,11 +868,21 @@ ${buttonElements}
 export const generateVueCode = (
     elements: ElementData[],
     styleType: StyleType,
-    _imageSrc: string
+    _imageSrc: string,
+    options: GenerateOptions = {}
 ): GeneratedCode[] => {
     const files: GeneratedCode[] = [];
+    const a11y = options.a11y || DEFAULT_A11Y_OPTIONS;
+    const responsive = options.responsive || DEFAULT_RESPONSIVE_OPTIONS;
+
+    const getAriaAttrs = (element: ElementData): string => {
+        if (!a11y.enabled || !a11y.includeAriaLabels) return '';
+        return ` aria-label="${element.styleData.buttonText || 'Button'}" role="button"`;
+    };
 
     const buttonElements = elements.map((element, index) => {
+        const ariaAttrs = getAriaAttrs(element);
+
         if (styleType === 'tailwind') {
             const { styleData, x, y } = element;
             const isGradient = isGradientButton(element.style);
@@ -509,16 +901,35 @@ export const generateVueCode = (
                 `boxShadow: '${styleData.shadowOffsetX}px ${styleData.shadowOffsetY}px ${styleData.shadowBlurRadius}px ${styleData.shadowColor}'`,
             ].join(', ');
 
+            const focusClasses = a11y.enabled && a11y.includeFocusStyles
+                ? ' focus:outline-2 focus:outline-blue-500 focus:outline-offset-2'
+                : '';
+
+            if (a11y.enabled && a11y.useSemanticButtons) {
+                return `        <button
+            @click="openLink('${element.styleData.buttonLink}')"
+            class="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02]${focusClasses}"
+            :style="{ ${styleObj} }"${ariaAttrs}
+        >
+            ${element.styleData.buttonText}
+        </button>`;
+            }
+
             return `        <a
             href="${element.styleData.buttonLink}"
             target="_blank"
-            class="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02] no-underline"
-            :style="{ ${styleObj} }"
+            rel="noopener noreferrer"
+            class="absolute inline-flex items-center justify-center font-semibold cursor-pointer transition-transform hover:scale-[1.02] no-underline${focusClasses}"
+            :style="{ ${styleObj} }"${ariaAttrs}
         >
             ${element.styleData.buttonText}
         </a>`;
         }
-        return `        <a href="${element.styleData.buttonLink}" target="_blank" class="button-${index}">${element.styleData.buttonText}</a>`;
+
+        if (a11y.enabled && a11y.useSemanticButtons) {
+            return `        <button @click="openLink('${element.styleData.buttonLink}')" class="button-${index}"${ariaAttrs}>${element.styleData.buttonText}</button>`;
+        }
+        return `        <a href="${element.styleData.buttonLink}" target="_blank" rel="noopener noreferrer" class="button-${index}"${ariaAttrs}>${element.styleData.buttonText}</a>`;
     }).join('\n');
 
     let stylesContent = '';
@@ -544,14 +955,21 @@ export const generateVueCode = (
     height: 100%;
 }`;
 
+        const responsiveContainerStyles = generateResponsiveContainerCSS(responsive);
+        stylesContent += responsiveContainerStyles;
+
         elements.forEach((element, index) => {
             if (styleType === 'scss') {
-                stylesContent += generateButtonSCSS(element, index);
+                stylesContent += generateButtonSCSS(element, index, options);
             } else {
-                stylesContent += generateButtonCSS(element, index);
+                stylesContent += generateButtonCSS(element, index, options);
             }
         });
     }
+
+    const imageAlt = a11y.enabled && a11y.includeAriaLabels
+        ? 'Promotion page banner image'
+        : 'Promotion';
 
     const styleTag = styleType === 'tailwind'
         ? ''
@@ -561,18 +979,29 @@ export const generateVueCode = (
 ${stylesContent}
 </style>`;
 
+    const responsiveClasses = responsive.enabled && styleType === 'tailwind'
+        ? 'relative w-full max-w-full md:max-w-4xl lg:max-w-6xl mx-auto'
+        : styleType === 'tailwind' ? 'relative w-full max-w-full' : 'promo-container';
+
+    const needsScript = a11y.enabled && a11y.useSemanticButtons;
+    const scriptContent = needsScript ? `
+const openLink = (url: string) => {
+    window.open(url, '_blank');
+};
+` : '';
+
     const componentContent = `<template>
-    <div class="${styleType === 'tailwind' ? 'relative w-full max-w-full' : 'promo-container'}">
-        <img :src="promoImage" alt="Promotion" class="${styleType === 'tailwind' ? 'w-full h-auto block' : 'promo-image'}" />
-        <div class="${styleType === 'tailwind' ? 'absolute top-0 left-0 w-full h-full' : 'buttons-container'}">
+    <main class="${responsiveClasses}">
+        <img :src="promoImage" alt="${imageAlt}" class="${styleType === 'tailwind' ? 'w-full h-auto block' : 'promo-image'}" />
+        <div class="${styleType === 'tailwind' ? 'absolute top-0 left-0 w-full h-full' : 'buttons-container'}"${a11y.enabled ? ' role="group" aria-label="프로모션 버튼 영역"' : ''}>
 ${buttonElements}
         </div>
-    </div>
+    </main>
 </template>
 
 <script setup lang="ts">
 import promoImage from './promotionPage.jpeg';
-</script>${styleTag}
+${scriptContent}</script>${styleTag}
 `;
 
     files.push({
@@ -588,16 +1017,17 @@ export const generateCode = (
     elements: ElementData[],
     framework: FrameworkType,
     styleType: StyleType,
-    imageSrc: string
+    imageSrc: string,
+    options: GenerateOptions = {}
 ): GeneratedCode[] => {
     switch (framework) {
         case 'vanilla':
-            return generateVanillaHTML(elements, styleType, imageSrc);
+            return generateVanillaHTML(elements, styleType, imageSrc, options);
         case 'react':
-            return generateReactCode(elements, styleType, imageSrc);
+            return generateReactCode(elements, styleType, imageSrc, options);
         case 'vue':
-            return generateVueCode(elements, styleType, imageSrc);
+            return generateVueCode(elements, styleType, imageSrc, options);
         default:
-            return generateVanillaHTML(elements, styleType, imageSrc);
+            return generateVanillaHTML(elements, styleType, imageSrc, options);
     }
 };
