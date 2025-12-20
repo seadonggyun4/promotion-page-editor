@@ -3,8 +3,10 @@
 # PromoKit
 
 **Event landing pages in 5 minutes.** Stop writing HTML/CSS and adjusting button coordinates manually.
-
-[한국어](./README.md)
+<br/>
+[SITE LINK](https://promotion-page-editor.netlify.app/)
+<br/>
+[한국어 문서](./README.md)
 
 ## The Problem
 
