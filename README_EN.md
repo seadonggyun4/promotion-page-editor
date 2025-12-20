@@ -88,24 +88,24 @@ Generate code that matches your project environment. Select framework and stylin
 
 ### Supported Styling (16)
 
-| Style | Vanilla | React | Vue |
-|:-----:|:-------:|:-----:|:---:|
-| CSS | ✓ | ✓ | ✓ |
-| SCSS | ✓ | ✓ | ✓ |
-| Styled Components | - | ✓ | - |
-| Emotion | - | ✓ | - |
-| Tailwind CSS | ✓ | ✓ | ✓ |
-| CSS Modules | ✓ | ✓ | ✓ |
-| UnoCSS | ✓ | ✓ | ✓ |
-| Panda CSS | - | ✓ | - |
-| Vanilla Extract | - | ✓ | - |
-| Stitches | - | ✓ | - |
-| Less | ✓ | ✓ | ✓ |
-| Stylus | ✓ | ✓ | ✓ |
-| Bootstrap | ✓ | ✓ | ✓ |
-| Bulma | ✓ | ✓ | ✓ |
-| Chakra UI | - | ✓ | - |
-| MUI (sx) | - | ✓ | - |
+| Style | Vanilla | React | Vue | Svelte | Angular | Solid | Preact | Astro | Qwik | Lit |
+|:-----:|:-------:|:-----:|:---:|:------:|:-------:|:-----:|:------:|:-----:|:----:|:---:|
+| CSS | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| SCSS | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Styled Components | - | ✓ | - | - | - | - | ✓ | - | - | - |
+| Emotion | - | ✓ | - | - | - | ✓ | ✓ | - | - | - |
+| Tailwind CSS | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| CSS Modules | - | ✓ | ✓ | ✓ | - | ✓ | ✓ | ✓ | ✓ | - |
+| UnoCSS | ✓ | ✓ | ✓ | ✓ | - | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Panda CSS | - | ✓ | - | - | - | ✓ | ✓ | - | ✓ | - |
+| Vanilla Extract | - | ✓ | - | - | - | ✓ | ✓ | - | ✓ | - |
+| Stitches | - | ✓ | - | - | - | - | ✓ | - | - | - |
+| Less | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Stylus | ✓ | ✓ | ✓ | ✓ | - | ✓ | ✓ | ✓ | - | - |
+| Bootstrap | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | - | ✓ |
+| Bulma | ✓ | ✓ | ✓ | ✓ | - | ✓ | ✓ | ✓ | - | ✓ |
+| Chakra UI | - | ✓ | - | - | - | - | - | - | - | - |
+| MUI (sx) | - | ✓ | - | - | - | - | - | - | - | - |
 
 ### Code Quality Options
 
