@@ -3,7 +3,9 @@
 # PromoKit
 
 **이벤트 랜딩 페이지, 5분이면 충분합니다.** HTML/CSS 작성하고 버튼 좌표 조정하는 반복 작업을 끝내세요.
-
+<br/>
+[사이트](https://promotion-page-editor.netlify.app/)
+<br/>
 [English Docs](./README_EN.md)
 
 ## 문제
