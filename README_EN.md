@@ -2,28 +2,32 @@
 
 # PromoKit
 
-**Event landing pages in 5 minutes.** Stop writing HTML/CSS and adjusting button coordinates manually.
-<br/>
-[SITE LINK](https://promotion-page-editor.netlify.app/)
-<br/>
-[한국어 문서](./README.md)
+**Streamline your event landing page workflow.** Place elements visually and generate production-ready code tailored to your project stack.
 
-## The Problem
+[Live Demo](https://promotion-page-editor.netlify.app/) · [한국어 문서](./README.md)
 
-Frontend developers repeatedly receive event landing page requests from planners. Each time, you need to:
-- Write HTML/CSS from scratch
-- Manually calculate button positions
-- Adjust coordinates pixel by pixel
-- Repeat for every new campaign
+---
 
-## The Solution
+## Overview
 
-PromoKit lets you visually place buttons on the planner's image and instantly generate production-ready code for your stack.
+Event landing pages are among the most frequently requested deliverables in frontend development. A typical workflow involves the following steps:
+
+| Step | Traditional Approach | With PromoKit |
+|:---:|:---------------------|:--------------|
+| 1 | Write HTML/CSS markup | Upload image |
+| 2 | Calculate button coordinates manually | Drag and drop placement |
+| 3 | Fine-tune pixel positions | Real-time preview |
+| 4 | Convert code per framework | Automatic code generation |
+
+PromoKit replaces these repetitive tasks with a visual interface, allowing developers to focus on business logic and user experience.
+
+### Workflow
 
 ```
-1. Upload image from planner
-2. Drag & drop buttons
-3. Copy code to your project
+1. Upload the design image provided by your planner
+2. Drag and drop buttons, text, and image overlays
+3. Select framework and styling options, then generate code
+4. Integrate the generated code into your project
 ```
 
 ---
@@ -31,49 +35,63 @@ PromoKit lets you visually place buttons on the planner's image and instantly ge
 ## Key Features
 
 ### Button Editor
-27 button presets available.
 
-| Category | Count | Description |
-|:--------:|:-----:|:------------|
-| Simple | 11 | SimpleBtn, PrimaryBtn, SecondaryBtn, SuccessBtn, DangerBtn, WarningBtn, DarkBtn, OutlineBtn, PillBtn, GhostBtn, NeonBtn |
+27 button presets are available, categorized into three groups.
+
+| Category | Count | Presets |
+|:--------:|:-----:|:--------|
+| Basic | 11 | SimpleBtn, PrimaryBtn, SecondaryBtn, SuccessBtn, DangerBtn, WarningBtn, DarkBtn, OutlineBtn, PillBtn, GhostBtn, NeonBtn |
 | Gradient | 10 | GradationBtn, SunsetBtn, OceanBtn, ForestBtn, PurpleHazeBtn, FireBtn, AuroraBtn, MidnightBtn, RoseGoldBtn, CyberBtn |
 | Animated | 6 | BounceBtn, GlowBtn, PulseBtn, ShakeBtn, SlideBtn, RippleBtn |
 
-**Animation Parameter Controls**: Adjust bounce height, glow size/intensity, pulse scale, shake distance, and more.
+Animated buttons support fine-tuned parameter adjustments including bounce height, glow size and intensity, pulse scale, and shake distance.
 
 ### Text Editor
-5 text presets (H1~H3, P, Strong)
-- Font family, size, weight, line height, letter spacing
-- Color, alignment, decoration, transform
-- Shadow effects
+
+5 text presets are available (H1, H2, H3, Paragraph, Strong).
+
+| Property Group | Adjustable Items |
+|:--------------|:-----------------|
+| Typography | Font family, size, weight, line height, letter spacing |
+| Style | Color, alignment, decoration, transform |
+| Effects | Text shadow |
 
 ### Image Overlay Editor
-12 image style presets
 
-| Category | Styles |
-|:--------:|:-------|
+12 image style presets are available.
+
+| Category | Presets |
+|:--------:|:--------|
 | Simple | SimpleImage, RoundedImage, CircleImage, PillImage |
 | Framed | BorderedImage, ShadowImage, NeonBorderImage, DoubleFrameImage |
 | Decorative | PolaroidImage, GradientBorderImage, GlowImage, VintageImage |
 
 ### Version History
-- **Undo/Redo** support (Ctrl+Z / Ctrl+Y)
+
+Manage your work history and restore previous states.
+
+- Undo/Redo support (`Ctrl+Z` / `Ctrl+Y`)
 - History timeline visualization
-- Jump to specific snapshots
-- Action type icons
+- Instant navigation to specific snapshots
+- Action type icons for differentiation
 
 ### Project Management
-- **Auto-save**: Saves to localStorage every 10 seconds
-- **JSON Export/Import**: Save and restore project files
-- **New Project**: SweetAlert2 confirmation dialog
+
+| Feature | Description |
+|:--------|:------------|
+| Auto-save | Automatically saves to localStorage every 10 seconds |
+| Export/Import | Save and restore project files in JSON format |
+| New Project | Safe initialization with confirmation dialog |
 
 ---
 
 ## Code Generation
 
-Generate code that matches your project environment. Select framework and styling method.
+Generate code that matches your project's tech stack. Select your preferred framework and styling method combination.
 
-### Supported Frameworks (10)
+### Supported Frameworks
+
+10 frontend frameworks are supported.
 
 | Framework | Description |
 |:---------:|:------------|
@@ -88,7 +106,9 @@ Generate code that matches your project environment. Select framework and stylin
 | Qwik | Qwik component |
 | Lit | Lit web component |
 
-### Supported Styling (16)
+### Supported Styling
+
+16 CSS methodologies and frameworks are supported. Refer to the compatibility matrix below.
 
 | Style | Vanilla | React | Vue | Svelte | Angular | Solid | Preact | Astro | Qwik | Lit |
 |:-----:|:-------:|:-----:|:---:|:------:|:-------:|:-----:|:------:|:-----:|:----:|:---:|
@@ -111,13 +131,35 @@ Generate code that matches your project environment. Select framework and stylin
 
 ### Code Quality Options
 
-- **Responsive**: Mobile/tablet/desktop media queries
-- **Accessibility (a11y)**: aria-label, focus styles, role attributes, aria-describedby
-- **SEO**: Open Graph, Twitter Card meta tags
+Three options are available to control the quality of generated code.
+
+#### Responsive
+Automatically generates media queries based on viewport size.
+- Mobile (≤480px), tablet (≤768px), and desktop breakpoint support
+- Relative adjustment of element positions and sizes
+
+#### Accessibility (a11y)
+Generates accessibility attributes following [WCAG 2.1](https://www.w3.org/WAI/standards-guidelines/wcag/) guidelines.
+
+| Attribute | Description |
+|:----------|:------------|
+| `aria-label` | Provides text alternatives for buttons and interactive elements |
+| `role` attribute | Specifies semantic roles for elements |
+| `aria-describedby` | Links references for elements requiring additional description |
+| Focus styles | Provides visual feedback during keyboard navigation |
+
+> **Note**: Due to the nature of image-based layouts, screen reader user experience may be limited. Enabling accessibility options for production deployment is recommended. Consider supplementing generated code with additional text alternatives as needed.
+
+#### SEO
+Generates meta tags for search engine optimization and social media sharing.
+- Open Graph protocol meta tags
+- Twitter Card meta tags
 
 ---
 
-## Quick Start
+## Getting Started
+
+### Installation
 
 ```bash
 git clone https://github.com/seadonggyun4/promo-kit.git
@@ -126,53 +168,64 @@ npm install
 npm run dev
 ```
 
+### Development Commands
+
+| Command | Description |
+|:--------|:------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview production build |
+
 ---
 
 ## Tech Stack
 
 | Category | Technology |
 |:--------:|:-----------|
-| Framework | React 18 + TypeScript + Vite |
+| Framework | React 18, TypeScript, Vite |
 | State Management | Zustand |
 | Styling | Styled Components |
 | Drag & Drop | @dnd-kit/core |
-| i18n | react-i18next (Korean, English, Japanese) |
-| Notifications | SweetAlert2, seo-toast |
+| Internationalization | react-i18next (Korean, English, Japanese) |
+| UI Feedback | SweetAlert2, seo-toast |
 
 ---
 
 ## Project Structure
 
+Follows the [Feature-Sliced Design](https://feature-sliced.design/) architecture.
+
 ```
 src/
-├── app/                    # App config, routing
-├── pages/                  # Pages
-│   ├── home/              # Landing page
-│   └── editor/            # Editor page
-├── widgets/                # Layout widgets
-│   ├── editor-panel/      # Edit panel (menu + content)
-│   └── preview-panel/     # Preview panel
-├── features/               # Feature modules
-│   ├── button-editor/     # Button editing
-│   ├── text-editor/       # Text editing
-│   ├── image-overlay-editor/  # Image overlay editing
-│   ├── image-upload/      # Image upload
-│   ├── download/          # Code generation & download
-│   └── version-history/   # History panel
-├── entities/               # Domain entities
-│   ├── button/            # Button style components
-│   ├── text/              # Text style components
-│   └── image-overlay/     # Image overlay styles
-└── shared/                 # Shared resources
-    ├── store/             # Zustand stores
-    ├── types/             # TypeScript types
-    ├── constants/         # Constants
-    ├── config/            # i18n config
-    └── ui/                # Shared UI components
+├── app/                        # Application configuration, routing
+├── pages/                      # Page components
+│   ├── home/                   # Landing page
+│   └── editor/                 # Editor page
+├── widgets/                    # Independent UI blocks
+│   ├── editor-panel/           # Edit panel
+│   └── preview-panel/          # Preview panel
+├── features/                   # Business feature units
+│   ├── button-editor/          # Button editing feature
+│   ├── text-editor/            # Text editing feature
+│   ├── image-overlay-editor/   # Image overlay editing feature
+│   ├── image-upload/           # Image upload feature
+│   ├── download/               # Code generation & download feature
+│   └── version-history/        # Version history management feature
+├── entities/                   # Domain entities
+│   ├── button/                 # Button style components
+│   ├── text/                   # Text style components
+│   └── image-overlay/          # Image overlay styles
+└── shared/                     # Shared resources
+    ├── store/                  # Zustand state stores
+    ├── types/                  # TypeScript type definitions
+    ├── constants/              # Constants and preset definitions
+    ├── config/                 # Configuration (i18n, etc.)
+    └── ui/                     # Common UI components
 ```
 
 ---
 
 ## License
 
-MIT
+MIT License. See the [LICENSE](./LICENSE) file for details.
